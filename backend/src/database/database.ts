@@ -18,3 +18,5 @@ const connectDatabase = async () => {
     console.log("Something went wrong. Failed to connect with database", error);
   }
 };
+
+export default connectDatabase;
