@@ -82,4 +82,65 @@ const adminLogin = expressAsyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export default { createNewAdmin, adminLogin };
+const passwordReset = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+
+      const verifyEmail = await Restaurant.findOne({ email: email });
+
+      if (!verifyEmail) {
+        res.status(400).send({ response: "No Email Found" });
+      } else {
+        const OTP = Math.random().toString().substring(3, 7);
+
+        const verifyAdminExists = await Authenticate.findOne({
+          user: verifyEmail?._id,
+        });
+
+        if (verifyAdminExists) {
+          await Authenticate.findOneAndUpdate(
+            { user: verifyEmail?._id },
+            { token: OTP },
+            { new: true },
+          );
+        } else {
+          await Authenticate.create({ user: verifyEmail?._id, token: OTP });
+        }
+
+        if (OTP) {
+          const transporter = nodemailer.createTransport({
+            service: process.env.MAIL_SERVICE,
+            auth: {
+              user: process.env.ADMIN_MAIL,
+              pass: process.env.ADMIN_PASS,
+            },
+          });
+
+          const mailOptions = {
+            from: process.env.ADMIN_MAIL,
+            to: email,
+            subject: "OTP for Password Reset ",
+            text: "Your OTP is " + OTP,
+          };
+
+          transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          });
+
+          res.status(200).send({ response: "OTP Sent Successfully" });
+        }
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .send({ response: "Server Error, Failed to Update Password" });
+    }
+  },
+);
+
+export default { createNewAdmin, adminLogin, passwordReset };
