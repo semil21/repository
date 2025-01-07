@@ -6,6 +6,7 @@ import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import str from "@supercharge/strings";
 import nodemailer from "nodemailer";
+import mongoose from "mongoose";
 
 const createNewAdmin = expressAsyncHandler(
   async (req: Request, res: Response) => {
@@ -82,7 +83,7 @@ const adminLogin = expressAsyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-const passwordReset = expressAsyncHandler(
+const forgotPassword = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
       const { email } = req.body;
@@ -90,15 +91,15 @@ const passwordReset = expressAsyncHandler(
       const verifyEmail = await Restaurant.findOne({ email: email });
 
       if (!verifyEmail) {
-        res.status(400).send({ response: "No Email Found" });
+        res.status(404).send({ response: "No Email Found" });
       } else {
         const OTP = Math.random().toString().substring(3, 7);
 
-        const verifyAdminExists = await Authenticate.findOne({
+        const adminExists = await Authenticate.findOne({
           user: verifyEmail?._id,
         });
 
-        if (verifyAdminExists) {
+        if (adminExists) {
           await Authenticate.findOneAndUpdate(
             { user: verifyEmail?._id },
             { token: OTP },
@@ -126,13 +127,16 @@ const passwordReset = expressAsyncHandler(
 
           transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-              console.log(error);
+              throw error;
             } else {
-              console.log("Email sent: " + info.response);
+              throw error;
             }
           });
 
-          res.status(200).send({ response: "OTP Sent Successfully" });
+          res.status(200).send({
+            response: "OTP Sent Successfully",
+            admin: adminExists?._id,
+          });
         }
       }
     } catch (error) {
@@ -143,4 +147,50 @@ const passwordReset = expressAsyncHandler(
   },
 );
 
-export default { createNewAdmin, adminLogin, passwordReset };
+const updatePassword = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { userId, otp, password } = req.body;
+
+      if (otp) {
+        const objectId = new mongoose.Types.ObjectId(userId).toString();
+
+        const findAuthenticateRecord = await Authenticate.findOne({
+          user: new mongoose.Types.ObjectId(objectId),
+        });
+
+        if (!findAuthenticateRecord) {
+          res.status(404).send({ response: "No Record Found" });
+        } else {
+          if (findAuthenticateRecord.token === otp) {
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+            await Restaurant.findByIdAndUpdate(
+              { _id: objectId },
+              { password: hashedPassword },
+              { new: true },
+            )
+              .then(() =>
+                Authenticate.findOneAndDelete({
+                  user: objectId,
+                }),
+              )
+              .then(() =>
+                res.status(200).send({
+                  response: "Password has been updated successfully.",
+                }),
+              );
+          }
+        }
+      }
+    } catch (error) {
+      res.status(500).send({
+        response: "Server Error, Failed to Update Password",
+        error: error,
+      });
+    }
+  },
+);
+
+export default { createNewAdmin, adminLogin, forgotPassword, updatePassword };

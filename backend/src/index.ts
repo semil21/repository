@@ -3,7 +3,7 @@ import Express from "express";
 
 import cors from "cors";
 import dotenv from "dotenv";
-import ownerRouter from "./route/admin/restaurant.route";
+import ownerRouter from "./route/admin/owner.route";
 
 connectDatabase();
 
