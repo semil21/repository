@@ -3,7 +3,8 @@ import Express from "express";
 
 import cors from "cors";
 import dotenv from "dotenv";
-import ownerRouter from "./route/admin/owner.route";
+import ownerRouter from "./route/admin/admin.route";
+import restrauntRouter from "./route/admin/restaurant.route";
 
 connectDatabase();
 
@@ -16,5 +17,6 @@ app.use(Express.json());
 
 // admin routes
 app.use("/owner", ownerRouter);
+app.use("/restraunt", restrauntRouter);
 
 app.listen(process.env.PORT_NUMBER, () => console.log("Server running"));

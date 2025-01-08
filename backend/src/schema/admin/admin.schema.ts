@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const RestaurantSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
   firstName: {
     type: String,
     require: true,
@@ -28,12 +28,8 @@ const RestaurantSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
-  isApproved: {
-    type: Boolean,
-    default: false,
-  },
 });
 
-const Restaurant = mongoose.model("Restaurant", RestaurantSchema);
+const Admin = mongoose.model("Admin", adminSchema);
 
-export default Restaurant;
+export default Admin;

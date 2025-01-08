@@ -1,4 +1,4 @@
-import Restaurant from "../../schema/admin/owner.schema";
+import Admin from "../../schema/admin/admin.schema";
 import Authenticate from "../../schema/admin/authenticate";
 
 import { Request, Response } from "express";
@@ -13,7 +13,7 @@ const createNewAdmin = expressAsyncHandler(
     try {
       const { email, password } = req.body;
 
-      const verifyEmailExists = await Restaurant.findOne({ email: email });
+      const verifyEmailExists = await Admin.findOne({ email: email });
 
       if (verifyEmailExists) {
         res.status(400).send({ response: "Ëmail Already Exists" });
@@ -24,10 +24,10 @@ const createNewAdmin = expressAsyncHandler(
 
         req.body.password = hashedPassword;
 
-        const saveRecord = await Restaurant.create(req.body);
+        const saveRecord = await Admin.create(req.body);
 
         if (saveRecord) {
-          res.status(200).send({ response: "Owner Created Successfully" });
+          res.status(200).send({ response: "Admin Created Successfully" });
         } else {
           res.status(400).send({ response: "Failed To Create New Admin" });
         }
@@ -44,7 +44,7 @@ const adminLogin = expressAsyncHandler(async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const findEmail = await Restaurant.findOne({ email: email });
+    const findEmail = await Admin.findOne({ email: email });
 
     if (!findEmail) {
       res.status(400).send({ response: "No Email Found" });
@@ -88,7 +88,7 @@ const forgotPassword = expressAsyncHandler(
     try {
       const { email } = req.body;
 
-      const verifyEmail = await Restaurant.findOne({ email: email });
+      const verifyEmail = await Admin.findOne({ email: email });
 
       if (!verifyEmail) {
         res.status(404).send({ response: "No Email Found" });
@@ -166,7 +166,7 @@ const updatePassword = expressAsyncHandler(
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-            await Restaurant.findByIdAndUpdate(
+            await Admin.findByIdAndUpdate(
               { _id: objectId },
               { password: hashedPassword },
               { new: true },
