@@ -28,6 +28,10 @@ const restaurantSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  status: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const Restaurant = mongoose.model("Restaurant", restaurantSchema);
