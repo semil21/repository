@@ -7,5 +7,6 @@ ownerRouter.post("/create", ownerController.createNewAdmin);
 ownerRouter.post("/login", ownerController.adminLogin);
 ownerRouter.post("/password-reset", ownerController.forgotPassword);
 ownerRouter.put("/update-password", ownerController.updatePassword);
+ownerRouter.post("/log-out/:userId", ownerController.adminLogOut);
 
 export default ownerRouter;

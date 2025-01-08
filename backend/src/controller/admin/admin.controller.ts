@@ -83,6 +83,26 @@ const adminLogin = expressAsyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+const adminLogOut = expressAsyncHandler(async (req: Request, res: Response) => {
+  try {
+    const userId = req.params?.userId;
+
+    const deleteAuthToken = await Authenticate.findOneAndDelete({
+      user: new mongoose.Types.ObjectId(userId),
+    });
+
+    if (!deleteAuthToken) {
+      res.status(400).send({ response: "Failed To Log Out" });
+    } else {
+      res.status(200).send({ response: "Log Out Successfully" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .send({ response: "Server Error, Failed To Log Out", erro: error });
+  }
+});
+
 const forgotPassword = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
@@ -193,4 +213,10 @@ const updatePassword = expressAsyncHandler(
   },
 );
 
-export default { createNewAdmin, adminLogin, forgotPassword, updatePassword };
+export default {
+  createNewAdmin,
+  adminLogin,
+  forgotPassword,
+  updatePassword,
+  adminLogOut,
+};
