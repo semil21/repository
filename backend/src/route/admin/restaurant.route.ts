@@ -9,5 +9,9 @@ restrauntRouter.put(
   "/update-restaurant/:restaurantId",
   restaurantController.updateRestaurant,
 );
+restrauntRouter.put(
+  "/update-status/:restaurantId",
+  restaurantController.updateRestaurantStatus,
+);
 
 export default restrauntRouter;

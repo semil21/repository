@@ -69,8 +69,38 @@ const updateRestaurant = expressAsyncHandler(
   },
 );
 
+const updateRestaurantStatus = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { restaurantId } = req.params;
+      const { status } = req.body;
+
+      const updatedStatus = status === true ? false : true;
+
+      const updateRecord = await Restaurant.findByIdAndUpdate(
+        { _id: restaurantId },
+        { status: updatedStatus },
+        { new: true },
+      );
+
+      if (updateRecord) {
+        res
+          .status(200)
+          .send({ response: "Restaurant Status Updated Successfully" });
+      } else {
+        res.status(400).send({ response: "Failed to update restaurat status" });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .send({ response: "Server Error, Failed to Update Restaurant status" });
+    }
+  },
+);
+
 export default {
   createNewRestaurant,
   getAllRestaurantOfAOwner,
   updateRestaurant,
+  updateRestaurantStatus,
 };
