@@ -6,7 +6,11 @@ const masterCategorySchema = new mongoose.Schema({
   },
   status: {
     type: Boolean,
-    default: true,
+    default: false,
+  },
+  approved: {
+    type: Boolean,
+    default: false,
   },
 });
 
