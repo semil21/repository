@@ -8,6 +8,7 @@ import ownerRouter from "./route/admin/admin.route";
 import restrauntRouter from "./route/admin/restaurant.route";
 
 import masterCategoryRooter from "./route/super-admin/master-category.route";
+import itemRouter from "./route/admin/item.route";
 
 connectDatabase();
 
@@ -24,5 +25,6 @@ app.use("/super-admin/master-category", masterCategoryRooter);
 // admin routes
 app.use("/owner", ownerRouter);
 app.use("/restraunt", restrauntRouter);
+app.use("/item", itemRouter);
 
 app.listen(process.env.PORT_NUMBER, () => console.log("Server running"));
