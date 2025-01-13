@@ -1,5 +1,6 @@
 "use client";
 import { sigUpType } from "@/app/_types/signup.type";
+import { sigUpSerice } from "@/app/service/signup";
 import Link from "next/link";
 
 import React from "react";
@@ -12,7 +13,7 @@ const Signup = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data: sigUpType) => console.log(data);
+  const onSubmit = async (data: sigUpType) => await sigUpSerice(data);
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4 sm:px-10 lg:px-32">
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row">
