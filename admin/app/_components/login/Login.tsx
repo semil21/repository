@@ -5,6 +5,9 @@ import { useForm } from "react-hook-form";
 import { loginType } from "../../_types/login.types";
 import { loginService } from "@/app/service/login";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const Login = () => {
   const {
     register,
@@ -15,6 +18,8 @@ const Login = () => {
   const onSubmit = async (data: loginType) => await loginService(data);
   return (
     <>
+      <ToastContainer />
+
       <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4 sm:px-10 lg:px-32">
         <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row">
           <div className="hidden md:flex md:w-1/2 bg-blue-600 flex-col justify-center items-center text-white p-6">
@@ -74,6 +79,14 @@ const Login = () => {
               >
                 Submit
               </button>
+
+              <p className="text-center text-sm md:text-lg">
+                <Link href="/forgot-password">
+                  <span className="text-blue-500 font-medium hover:underline px-2">
+                    Forgot Password ?
+                  </span>
+                </Link>
+              </p>
 
               <p className="text-center text-sm md:text-lg">
                 Don’t have an account?
