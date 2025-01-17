@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { loginType } from "../../_types/login.types";
-import { loginService } from "@/app/service/login";
-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import { loginType } from "../../_types/login.types";
+import { loginService } from "@/app/service/login";
 
 const Login = () => {
   const {
@@ -15,7 +16,19 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data: loginType) => await loginService(data);
+  const router = useRouter();
+
+  const onSubmit = async (data: loginType) =>
+    await loginService(data).then(() => router.push("/dashboard"));
+
+  useEffect(() => {
+    const verifySession = window.sessionStorage.getItem("token");
+
+    if (verifySession) {
+      router.push("/dashboard");
+    }
+  }, []);
+
   return (
     <>
       <ToastContainer />

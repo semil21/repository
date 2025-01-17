@@ -1,6 +1,7 @@
 import { loginType } from "../_types/login.types";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 export const loginService = async (data: loginType) => {
   try {
@@ -8,6 +9,11 @@ export const loginService = async (data: loginType) => {
       `${process.env.NEXT_PUBLIC_DB_URL}/owner/login`,
       data,
     );
+
+    console.log("lkjh", login);
+
+    window.sessionStorage.setItem("token", login.data.token);
+
     toast.success(`Welcome Back !`, {
       position: "top-center",
       autoClose: 3000,
