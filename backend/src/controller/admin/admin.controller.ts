@@ -56,50 +56,14 @@ const adminLogin = expressAsyncHandler(async (req: Request, res: Response) => {
       if (!isPasswordCorrect) {
         res.status(400).send({ response: "Incorrect Password, Try Again" });
       } else {
-        const randomToken = str.random();
-
-        const verifyTokenExists = await Authenticate.findOne({
-          user: findEmail?._id,
+        res.status(200).send({
+          response: "Login Successfull",
+          token: findEmail?._id,
         });
-
-        if (verifyTokenExists) {
-          await Authenticate.deleteOne({ user: findEmail?._id });
-        }
-        await Authenticate.create({ user: findEmail?._id, token: randomToken });
-
-        if (isPasswordCorrect && randomToken) {
-          res.status(200).send({
-            response: "Logged in successfully",
-            token: randomToken,
-            userId: findEmail?._id,
-          });
-        } else {
-          res.status(400).send({ response: "Failed to log in" });
-        }
       }
     }
   } catch (error) {
     res.status(500).send({ response: "Server Error, Failed To Log In." });
-  }
-});
-
-const adminLogOut = expressAsyncHandler(async (req: Request, res: Response) => {
-  try {
-    const userId = req.params?.userId;
-
-    const deleteAuthToken = await Authenticate.findOneAndDelete({
-      user: new mongoose.Types.ObjectId(userId),
-    });
-
-    if (!deleteAuthToken) {
-      res.status(400).send({ response: "Failed To Log Out" });
-    } else {
-      res.status(200).send({ response: "Log Out Successfully" });
-    }
-  } catch (error) {
-    res
-      .status(500)
-      .send({ response: "Server Error, Failed To Log Out", erro: error });
   }
 });
 
@@ -218,5 +182,4 @@ export default {
   adminLogin,
   forgotPassword,
   updatePassword,
-  adminLogOut,
 };
