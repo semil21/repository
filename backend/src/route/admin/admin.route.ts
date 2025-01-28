@@ -1,11 +1,12 @@
 import express from "express";
-import ownerController from "../../controller/admin/admin.controller";
+import {
+  createNewAdmin,
+  adminLogin,
+} from "../../controller/admin/admin.controller";
 
-const ownerRouter = express.Router();
+const adminRouter = express.Router();
 
-ownerRouter.post("/create", ownerController.createNewAdmin);
-ownerRouter.post("/login", ownerController.adminLogin);
-ownerRouter.post("/password-reset", ownerController.forgotPassword);
-ownerRouter.put("/update-password", ownerController.updatePassword);
+adminRouter.post("/create", createNewAdmin);
+adminRouter.post("/login", adminLogin);
 
-export default ownerRouter;
+export default adminRouter;

@@ -1,14 +1,11 @@
 import connectDatabase from "./database/database";
-import Express from "express";
+import Express, { NextFunction, Request, Response } from "express";
 
 import cors from "cors";
 import dotenv from "dotenv";
 
-import ownerRouter from "./route/admin/admin.route";
-import restrauntRouter from "./route/admin/restaurant.route";
-
-import itemRouter from "./route/admin/item.route";
-import categoryRouter from "./route/admin/category.route";
+import adminRouter from "./route/admin/admin.route";
+import restaurantRouter from "./route/admin/restaurant.route";
 
 connectDatabase();
 
@@ -22,9 +19,11 @@ app.use(Express.json());
 // super admin routes
 
 // admin routes
-app.use("/owner", ownerRouter);
-app.use("/restraunt", restrauntRouter);
-app.use("/item", itemRouter);
-app.use("/category", categoryRouter);
+app.use("/admin", adminRouter);
+app.use("/restaurant", restaurantRouter);
 
+app.post("/resource", (req: Request, res: Response, next: NextFunction) => {
+  res.send("hello");
+  next();
+});
 app.listen(process.env.PORT_NUMBER, () => console.log("Server running"));
