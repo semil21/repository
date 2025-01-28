@@ -1,8 +1,14 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 
 dotenv.config();
+
+interface CustomJwtPayload extends JwtPayload {
+  checkEmailExists?: {
+    _id?: string;
+  };
+}
 const verifyTokenExists = async (
   req: Request,
   res: Response,
@@ -21,7 +27,11 @@ const verifyTokenExists = async (
       if (error) {
         res.status(500).send({ response: "Invalid token" });
       }
-      req.body.user = decoded;
+
+      const decodedToken = decoded as CustomJwtPayload;
+
+      const uniqueID = decodedToken.checkEmailExists?._id;
+      req.body.user = uniqueID;
       next();
     });
   } catch (error) {

@@ -1,6 +1,6 @@
 import Admin from "../../schema/admin/admin.schema";
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -36,6 +36,7 @@ export const createNewAdmin = expressAsyncHandler(
     }
   },
 );
+
 export const adminLogin = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
@@ -68,52 +69,8 @@ export const adminLogin = expressAsyncHandler(
       } else {
         res.status(400).send({ response: "Failed to log in" });
       }
-
-      // Let expressAsyncHandler handle the response
     } catch (error) {
-      // Let expressAsyncHandler handle the error
       throw error;
     }
   },
 );
-
-// export const adminLogin = expressAsyncHandler(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//       const { email, password } = req.body;
-
-//       const checkEmailExists = await Admin.findOne({ email: email });
-
-//       if (!checkEmailExists) {
-//         return res.status(400).send({ response: "Email Does Not Exists" });
-//       }
-
-//       const hashedPassword = checkEmailExists?.password ?? "";
-
-//       const verifyPassword = await bcrypt.compare(password, hashedPassword);
-
-//       if (!verifyPassword) {
-//         return res.status(400).send({ response: "Incorrect password" });
-//       }
-
-//       const secretKey = process.env.JWT_SECRET_KEY || "";
-
-//       jwt.sign(
-//         { checkEmailExists },
-//         secretKey,
-//         { expiresIn: "5h" },
-//         // (error, token) => {
-//         //   if (error) {
-//         //     res.status(400).send({ response: "Failed to log in" });
-//         //   }
-
-//         //   res.status(200).send({ response: "Logged in ", token: token });
-//         // },
-//       );
-//       res.status(200).send({ response: "" });
-//       next();
-//     } catch (error) {
-//       res.status(200).send({ response: "Server Error, failed to log in" });
-//     }
-//   },
-// );

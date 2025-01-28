@@ -22,8 +22,4 @@ app.use(Express.json());
 app.use("/admin", adminRouter);
 app.use("/restaurant", restaurantRouter);
 
-app.post("/resource", (req: Request, res: Response, next: NextFunction) => {
-  res.send("hello");
-  next();
-});
 app.listen(process.env.PORT_NUMBER, () => console.log("Server running"));
