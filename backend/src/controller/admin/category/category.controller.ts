@@ -42,3 +42,54 @@ export const getAllCategoriesOfUser = expressAsyncHandler(
     }
   },
 );
+
+export const updateCategory = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const categoryID = req.params?.categoryId;
+
+      const updateCategoryRecord = await Category.findByIdAndUpdate(
+        { _id: categoryID },
+        req.body,
+        { new: true },
+      );
+
+      if (updateCategoryRecord) {
+        res.status(200).send({ response: updateCategoryRecord });
+      } else {
+        res.status(400).send({ response: "Failed to update cateory record" });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .send({ response: "Server Error, failed to update category" });
+    }
+  },
+);
+
+export const updateCategoryStatus = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const categoryID = req.params?.categoryId;
+      const { status } = req.body;
+
+      const updatedStatus = status == true ? false : true;
+
+      const updateRecordStatus = await Category.findByIdAndUpdate(
+        { _id: categoryID },
+        { status: updatedStatus },
+        { new: true },
+      );
+
+      if (updateRecordStatus) {
+        res.status(200).send({ response: updateRecordStatus?.status });
+      } else {
+        res.status(400).send({ response: "Failed to update category status" });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .send({ response: "Server error, failed to update category status" });
+    }
+  },
+);
