@@ -2,7 +2,7 @@ import express from "express";
 import {
   createNewAdmin,
   adminLogin,
-} from "../../controller/admin/admin.controller";
+} from "../../../controller/admin/admin/admin.controller";
 
 const adminRouter = express.Router();
 

@@ -4,8 +4,8 @@ import Express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
-import adminRouter from "./route/admin/admin.route";
-import restaurantRouter from "./route/admin/restaurant.route";
+import adminRouter from "./route/admin/admin/admin.route";
+import restaurantRouter from "./route/admin/restaurant/restaurant.route";
 
 connectDatabase();
 

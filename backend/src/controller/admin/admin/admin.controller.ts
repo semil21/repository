@@ -1,4 +1,4 @@
-import Admin from "../../schema/admin/admin.schema";
+import Admin from "../../../schema/admin/admin/admin.schema";
 
 import { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";

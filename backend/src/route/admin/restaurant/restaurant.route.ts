@@ -3,9 +3,9 @@ import {
   getAllRestaurantsOfUser,
   updateRestaurant,
   updateRestaurantStatus,
-} from "../../controller/admin/restaurant.controller";
+} from "../../../controller/admin/restaurant/restaurant.controller";
 import express from "express";
-import verifyTokenExists from "../../middleware/verify-token.middleware";
+import verifyTokenExists from "../../../middleware/verify-token.middleware";
 
 const restaurantRouter = express.Router();
 

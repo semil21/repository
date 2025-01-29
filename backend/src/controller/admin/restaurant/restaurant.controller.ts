@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-import Restaurant from "../../schema/admin/restaurant.schema";
+import Restaurant from "../../../schema/admin/restaurant/restaurant.schema";
 
 import { Request, Response } from "express";
 
