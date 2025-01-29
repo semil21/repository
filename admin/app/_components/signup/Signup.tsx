@@ -1,22 +1,44 @@
 "use client";
+import { useSignUpHook } from "@/app/_hooks/signup/signup.hook";
 import { sigUpType } from "@/app/_types/signup.type";
-import { sigUpService } from "@/app/service/signup";
 import Link from "next/link";
 
 import React from "react";
 import { useForm } from "react-hook-form";
 
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 const Signup = () => {
+  const router = useRouter();
+  const { mutate, isPeding } = useSignUpHook();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
-  const onSubmit = async (data: sigUpType) => await sigUpService(data);
+  const onSubmit = async (data: sigUpType) => {
+    mutate(data, {
+      onSuccess: () => {
+        toast.success(
+          "Your account is created successfully. Log in and start your journey",
+          {
+            position: "top-center",
+          },
+        );
+        reset();
+      },
+      onError: (error) => {
+        toast.error(`${error?.response?.data?.response}`, {
+          autoClose: 9000,
+          position: "top-center",
+        });
+      },
+    });
+  };
 
   return (
     <>
@@ -111,6 +133,18 @@ const Signup = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm md:text-base font-medium">
+                  Alternate Number
+                </label>
+                <input
+                  type="number"
+                  placeholder="Enter your contact number"
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register("alternateContact")}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm md:text-base font-medium">
                   Email
                 </label>
                 <input
@@ -147,7 +181,7 @@ const Signup = () => {
                 type="submit"
                 className="w-full bg-blue-500 text-white py-2 rounded-md text-lg hover:bg-blue-600 transition duration-300"
               >
-                Submit
+                {isPeding ? "Submitting" : "Submit"}
               </button>
 
               <p className="text-center text-sm md:text-lg">

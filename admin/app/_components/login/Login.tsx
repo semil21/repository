@@ -1,33 +1,57 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { loginType } from "../../_types/login.types";
-import { loginService } from "@/app/service/login";
+import { loginType } from "../../_types/login.type";
+import { useRouter } from "next/navigation";
+import { useLoginHook } from "@/app/_hooks/login/login.hook";
 
 const Login = () => {
+  const router = useRouter();
+
+  const { mutate, isPending } = useLoginHook();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const router = useRouter();
-
-  const onSubmit = async (data: loginType) =>
-    await loginService(data).then(() => router.push("/dashboard"));
-
   useEffect(() => {
-    const verifySession = window.sessionStorage.getItem("token");
-
-    if (verifySession) {
+    const sessionId = sessionStorage.getItem("session_id");
+    if (sessionId) {
       router.push("/dashboard");
     }
-  }, []);
+  }, [router]);
+
+  const onSubmit = async (data: loginType) => {
+    mutate(data, {
+      onSuccess: (response) => {
+        toast.success("Welcome Back.", {
+          autoClose: 1500,
+          onClose: () => {
+            sessionStorage.setItem("session_id", response.token);
+            router.push("/dashboard");
+          },
+        });
+      },
+      onError: (error) => {
+        console.log("err123", error);
+        toast.error(`${error?.response?.data?.response}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      },
+    });
+  };
 
   return (
     <>
@@ -89,8 +113,9 @@ const Login = () => {
               <button
                 type="submit"
                 className="w-full bg-blue-500 text-white py-2 rounded-md text-lg hover:bg-blue-600 transition duration-300"
+                disabled={isPending}
               >
-                Submit
+                {isPending ? "Submitting" : "Submit"}
               </button>
 
               <p className="text-center text-sm md:text-lg">

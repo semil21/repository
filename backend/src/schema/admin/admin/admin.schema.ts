@@ -18,7 +18,7 @@ const adminSchema = new mongoose.Schema({
     require: true,
   },
   alternateContact: {
-    type: String,
+    type: Number,
   },
   email: {
     type: String,

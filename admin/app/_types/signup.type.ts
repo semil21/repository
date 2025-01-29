@@ -1,7 +1,7 @@
 export type sigUpType = {
   firstName?: string;
   lastName?: string;
-  aadharNumber?: number;
+  aadharNumber?: string;
   contact?: number;
   alternateContact?: number;
   email?: string;

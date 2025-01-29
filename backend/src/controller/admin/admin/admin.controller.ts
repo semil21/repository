@@ -13,7 +13,7 @@ export const createNewAdmin = expressAsyncHandler(
       const verifyEmailExists = await Admin.findOne({ email: email });
 
       if (verifyEmailExists) {
-        res.status(400).send({ response: "Ëmail Already Exists" });
+        res.status(400).send({ response: "Email Already Exists" });
       } else {
         const saltRounds = 10;
 
@@ -45,7 +45,7 @@ export const adminLogin = expressAsyncHandler(
       const checkEmailExists = await Admin.findOne({ email: email });
 
       if (!checkEmailExists) {
-        throw new Error("Email Does Not Exists");
+        res.status(400).send({ response: "Wrong Email. Please Try Again" });
       }
 
       const hashedPassword = checkEmailExists?.password ?? "";
@@ -53,7 +53,7 @@ export const adminLogin = expressAsyncHandler(
       const verifyPassword = await bcrypt.compare(password, hashedPassword);
 
       if (!verifyPassword) {
-        throw new Error("Incorrect password");
+        res.status(400).send({ response: "Wrong Password" });
       }
 
       const secretKey = process.env.JWT_SECRET_KEY || "";
