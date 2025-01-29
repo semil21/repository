@@ -24,6 +24,22 @@ const restaurantSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  district: {
+    type: String,
+    require: true,
+  },
+  city: {
+    type: String,
+    require: true,
+  },
+  state: {
+    type: String,
+    reuire: true,
+  },
+  country: {
+    type: String,
+    require: true,
+  },
   isApproved: {
     type: Boolean,
     default: false,

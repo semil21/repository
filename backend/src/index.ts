@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 
 import adminRouter from "./route/admin/admin/admin.route";
 import restaurantRouter from "./route/admin/restaurant/restaurant.route";
+import categoryRouter from "./route/admin/category/category.route";
 
 connectDatabase();
 
@@ -21,5 +22,6 @@ app.use(Express.json());
 // admin routes
 app.use("/admin", adminRouter);
 app.use("/restaurant", restaurantRouter);
+app.use("/category", categoryRouter);
 
 app.listen(process.env.PORT_NUMBER, () => console.log("Server running"));
