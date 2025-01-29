@@ -1,10 +1,11 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 
 import { HiOutlineHome } from "react-icons/hi";
 import { BiCategory } from "react-icons/bi";
 import { IoFastFoodOutline } from "react-icons/io5";
-import Link from "next/link";
+import { FaHotel } from "react-icons/fa";
 
 export default function DashboardLayout({
   children,
@@ -28,21 +29,28 @@ export default function DashboardLayout({
         <nav>
           <ul className="space-y-4">
             <Link href="/dashboard">
-              <li className="flex items-center gap-3 text-black hover:bg-purple-700 hover:text-white p-2	">
+              <li className="flex items-center gap-3 text-black hover:bg-blue-600 hover:text-white p-2	">
                 <HiOutlineHome className="text-2xl" />
 
                 <span className="block text-xl font-bold">Home</span>
               </li>
             </Link>
+            <Link href="/dashboard/restaurant">
+              <li className="flex items-center gap-3 text-black hover:bg-blue-600 hover:text-white p-2	">
+                <FaHotel className="text-2xl" />
+
+                <span className="block text-xl font-bold">Restaurant</span>
+              </li>
+            </Link>
             <Link href="/dashboard/category">
-              <li className="flex items-center gap-3 text-black hover:bg-purple-700 hover:text-white p-2	">
+              <li className="flex items-center gap-3 text-black hover:bg-blue-600 hover:text-white p-2	">
                 <BiCategory className="text-2xl" />
 
                 <span className="block text-xl font-bold">Category</span>
               </li>
             </Link>
             <Link href="/dashboard/category">
-              <li className="flex items-center gap-3 text-black hover:bg-purple-700 hover:text-white p-2	">
+              <li className="flex items-center gap-3 text-black hover:bg-blue-600 hover:text-white p-2	">
                 <IoFastFoodOutline className="text-2xl" />
 
                 <span className="block text-xl font-bold">Item</span>
