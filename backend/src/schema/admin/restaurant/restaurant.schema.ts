@@ -16,15 +16,11 @@ const restaurantSchema = new mongoose.Schema({
   alternateContact: {
     type: Number,
   },
-  address: {
-    type: String,
-    require: true,
-  },
   email: {
     type: String,
     require: true,
   },
-  district: {
+  address: {
     type: String,
     require: true,
   },
