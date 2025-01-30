@@ -21,3 +21,22 @@ export const addRestaurantService = async (data: restaurantType) => {
     throw error;
   }
 };
+
+export const getAllRestaurantOfUser = async () => {
+  try {
+    const authToken = sessionStorage.getItem("session_id");
+
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_DB_URL}/restaurant/user`,
+      {
+        headers: {
+          authorization: authToken,
+        },
+      },
+    );
+
+    return response?.data?.response;
+  } catch (error) {
+    throw error;
+  }
+};

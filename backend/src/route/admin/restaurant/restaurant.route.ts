@@ -10,7 +10,7 @@ import verifyTokenExists from "../../../middleware/verify-token.middleware";
 const restaurantRouter = express.Router();
 
 restaurantRouter.post("/create", verifyTokenExists, addNewRestaurant);
-restaurantRouter.post("/user", verifyTokenExists, getAllRestaurantsOfUser);
+restaurantRouter.get("/user", verifyTokenExists, getAllRestaurantsOfUser);
 restaurantRouter.put(
   "/update/:restaurantId",
   verifyTokenExists,
