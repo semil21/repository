@@ -1,9 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import AddrestaurantModal from "./addRestaurantModal";
-import { useGetAllRestaurantHooke } from "@/app/_hooks/restaurant/restaurant.hook";
+import {
+  useGetAllRestaurantHooke,
+  useUpdateRestaurantStatusHook,
+} from "@/app/_hooks/restaurant/restaurant.hook";
 import { restaurantType } from "@/app/_types/restaurant.type";
 import { FaEdit } from "react-icons/fa";
+import { useQueryClient } from "@tanstack/react-query";
 
 const RestaurantDataTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -11,6 +15,8 @@ const RestaurantDataTable = () => {
   const [editRestaurantData, setEditRestaurantData] = useState({});
 
   const { data, isLoading } = useGetAllRestaurantHooke();
+
+  const queryCLient = useQueryClient();
 
   const filteredData = data?.filter(
     (item: restaurantType) =>
@@ -33,6 +39,28 @@ const RestaurantDataTable = () => {
 
   const closeModal = () => {
     setShowModal(false);
+  };
+
+  const { mutate } = useUpdateRestaurantStatusHook();
+
+  const handleStatusUpdate = async (_id?: string, status?: boolean) => {
+    const data = { _id, status };
+    mutate(data, {
+      onSuccess: () => {
+        console.log("status updated successfully");
+
+        queryCLient.setQueryData(
+          ["all-restaurants"],
+          (oldRestaurantData: restaurantType[]) => {
+            return oldRestaurantData?.map((restaurant) =>
+              restaurant._id === _id
+                ? { ...restaurant, status: !status }
+                : restaurant,
+            );
+          },
+        );
+      },
+    });
   };
 
   return (
@@ -178,28 +206,37 @@ const RestaurantDataTable = () => {
                     </td>
                     <td className="w-[120px] p-4 border-b border-slate-200 py-5">
                       <p className="text-sm font-medium text-slate-3 500">
-                        {item?.status ? (
-                          <span className="text-green-600 font-semibold">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="text-red-600 font-semibold">
-                            Inactive
-                          </span>
-                        )}
+                        <button
+                          className="bg-white border-[1px] w-[80px] rounded-md border-black text-white font-bold py-2 px-4 "
+                          onClick={() =>
+                            handleStatusUpdate(item?._id, item?.status)
+                          }
+                        >
+                          {item?.status ? (
+                            <span className="text-green-600 font-semibold">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="text-red-600 font-semibold">
+                              Inactive
+                            </span>
+                          )}
+                        </button>
                       </p>
                     </td>
                     <td className="w-[180px] p-4 border-b border-slate-200 py-5">
                       <p className="text-sm font-medium text-slate-3 500">
-                        {item?.isApproved ? (
-                          <span className="text-green-600 font-semibold">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="text-red-600 font-semibold">
-                            Inactive
-                          </span>
-                        )}
+                        <button className="bg-white border-[1px] w-[80px] rounded-md border-black text-white font-bold py-2 px-4 ">
+                          {item?.isApproved ? (
+                            <span className="text-green-600 font-semibold">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="text-red-600 font-semibold">
+                              Inactive
+                            </span>
+                          )}
+                        </button>
                       </p>
                     </td>
                     <td className="w-[180px] p-4 border-b border-slate-200 py-5">

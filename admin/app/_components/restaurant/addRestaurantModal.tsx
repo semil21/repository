@@ -21,8 +21,6 @@ type Props = {
 const AddrestaurantModal = (props: Props) => {
   const { openModal, closeModal } = props;
 
-  console.log("0987", openModal);
-
   const [isOpen, setIsOpen] = useState(false);
   const queryCLient = useQueryClient();
   const {

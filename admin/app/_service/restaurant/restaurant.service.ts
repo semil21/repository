@@ -56,9 +56,26 @@ export const updateRestaurantData = async (data: restaurantType) => {
       },
     );
 
-    console.log("updated data123", updateREcord?.data?.response);
-
     return updateREcord?.data?.response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateRestaurantStatus = async (data: restaurantType) => {
+  try {
+    const authToken = sessionStorage.getItem("session_id");
+    const { _id, status } = data;
+
+    const updateStatus = await axios.put(
+      `${process.env.NEXT_PUBLIC_DB_URL}/restaurant/update-status/${_id}`,
+      { status: status },
+      {
+        headers: { authorization: authToken },
+      },
+    );
+
+    return updateStatus?.data?.response;
   } catch (error) {
     throw error;
   }

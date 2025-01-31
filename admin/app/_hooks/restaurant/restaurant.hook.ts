@@ -2,6 +2,7 @@ import {
   addRestaurantService,
   getAllRestaurantOfUser,
   updateRestaurantData,
+  updateRestaurantStatus,
 } from "@/app/_service/restaurant/restaurant.service";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -15,12 +16,17 @@ export const useGetAllRestaurantHooke = () => {
   return useQuery({
     queryKey: ["all-restaurants"],
     queryFn: getAllRestaurantOfUser,
-    // staleTime: 1000 * 60 * 40,
   });
 };
 
 export const useUpdateRestaurantHook = () => {
   return useMutation({
     mutationFn: updateRestaurantData,
+  });
+};
+
+export const useUpdateRestaurantStatusHook = () => {
+  return useMutation({
+    mutationFn: updateRestaurantStatus,
   });
 };
