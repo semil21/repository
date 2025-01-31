@@ -226,17 +226,15 @@ const RestaurantDataTable = () => {
                     </td>
                     <td className="w-[180px] p-4 border-b border-slate-200 py-5">
                       <p className="text-sm font-medium text-slate-3 500">
-                        <button className="bg-white border-[1px] w-[80px] rounded-md border-black text-white font-bold py-2 px-4 ">
-                          {item?.isApproved ? (
-                            <span className="text-green-600 font-semibold">
-                              Active
-                            </span>
-                          ) : (
-                            <span className="text-red-600 font-semibold">
-                              Inactive
-                            </span>
-                          )}
-                        </button>
+                        {item?.isApproved ? (
+                          <span className="text-green-600 font-semibold">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="text-red-600 font-semibold">
+                            Inactive
+                          </span>
+                        )}
                       </p>
                     </td>
                     <td className="w-[180px] p-4 border-b border-slate-200 py-5">

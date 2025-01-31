@@ -1,7 +1,12 @@
+import CategoryDataTable from "@/app/_components/category/categoryDataTable";
 import React from "react";
 
 const page = () => {
-  return <div> dashboard category page</div>;
+  return (
+    <div>
+      <CategoryDataTable />
+    </div>
+  );
 };
 
 export default page;
