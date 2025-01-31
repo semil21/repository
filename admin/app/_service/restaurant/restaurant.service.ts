@@ -40,3 +40,26 @@ export const getAllRestaurantOfUser = async () => {
     throw error;
   }
 };
+
+export const updateRestaurantData = async (data: restaurantType) => {
+  try {
+    const { _id } = data;
+    const authToken = sessionStorage.getItem("session_id");
+
+    const updateREcord = await axios.put(
+      `${process.env.NEXT_PUBLIC_DB_URL}/restaurant/update/${_id}`,
+      data,
+      {
+        headers: {
+          authorization: authToken,
+        },
+      },
+    );
+
+    console.log("updated data123", updateREcord?.data?.response);
+
+    return updateREcord?.data?.response;
+  } catch (error) {
+    throw error;
+  }
+};

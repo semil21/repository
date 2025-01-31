@@ -1,6 +1,9 @@
 "use client";
 
-import { useAddRestaurantHook } from "@/app/_hooks/restaurant/restaurant.hook";
+import {
+  useAddRestaurantHook,
+  useUpdateRestaurantHook,
+} from "@/app/_hooks/restaurant/restaurant.hook";
 import { restaurantType } from "@/app/_types/restaurant.type";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -9,7 +12,17 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useQueryClient } from "@tanstack/react-query";
 
-const AddrestaurantModal = () => {
+type Props = {
+  openModal?: boolean;
+  editRestaurantData?: restaurantType;
+  closeModal: (value?: boolean) => void;
+};
+
+const AddrestaurantModal = (props: Props) => {
+  const { openModal, closeModal } = props;
+
+  console.log("0987", openModal);
+
   const [isOpen, setIsOpen] = useState(false);
   const queryCLient = useQueryClient();
   const {
@@ -21,19 +34,48 @@ const AddrestaurantModal = () => {
 
   const { mutate, isPending } = useAddRestaurantHook();
 
+  const updateMutation = useUpdateRestaurantHook();
+
   const onsubmit = async (data: restaurantType) => {
     mutate(data, {
       onSuccess: (newRestaurant) => {
         toast.success("Restaurant Added Successfully", {
           position: "top-center",
         });
+        setIsOpen(false);
+        reset();
         queryCLient.setQueryData(
           ["all-restaurants"],
           (oldRestaurantData: restaurantType[]) => {
             return [...oldRestaurantData, newRestaurant];
           },
         );
-        setIsOpen(false);
+      },
+    });
+  };
+
+  const onUpdate = (data: restaurantType) => {
+    data._id = props.editRestaurantData?._id;
+
+    updateMutation.mutate(data, {
+      onSuccess: () => {
+        toast.success("Restaurant Updated Successfully", {
+          position: "top-center",
+        });
+
+        queryCLient.setQueryData(
+          ["all-restaurants"],
+          (oldRestaurantData: restaurantType[]) => {
+            return oldRestaurantData.map((restaurant) => {
+              if (restaurant?._id === data?._id) {
+                return data;
+              }
+              return restaurant;
+            });
+          },
+        );
+
+        closeModal(false);
         reset();
       },
     });
@@ -52,7 +94,7 @@ const AddrestaurantModal = () => {
         </button>
       </div>
 
-      {isOpen && (
+      {(isOpen || openModal) && (
         <div className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
           <div className="relative p-4 w-full max-w-2xl bg-white rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
@@ -60,7 +102,11 @@ const AddrestaurantModal = () => {
                 Add New Restaurant
               </h3>
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  setIsOpen(false);
+                  reset();
+                  closeModal?.(false);
+                }}
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
               >
                 <svg
@@ -93,6 +139,9 @@ const AddrestaurantModal = () => {
                     id="username"
                     type="text"
                     placeholder="Enter Restaurant Name"
+                    defaultValue={
+                      openModal ? props.editRestaurantData?.name : ""
+                    }
                     {...register("name", { required: true })}
                   />
                   {errors.name && (
@@ -110,6 +159,9 @@ const AddrestaurantModal = () => {
                     id="username"
                     type="number"
                     placeholder="enter restaurant contact number"
+                    defaultValue={
+                      openModal ? props.editRestaurantData?.contact : ""
+                    }
                     {...register("contact", { required: true })}
                   />
                   {errors.contact && (
@@ -126,6 +178,11 @@ const AddrestaurantModal = () => {
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="username"
                     type="number"
+                    defaultValue={
+                      openModal
+                        ? props.editRestaurantData?.alternateContact
+                        : ""
+                    }
                     {...register("alternateContact")}
                     placeholder="enter alternate restaurant contact or landine number"
                   />
@@ -137,6 +194,9 @@ const AddrestaurantModal = () => {
                   <textarea
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="username"
+                    defaultValue={
+                      openModal ? props.editRestaurantData?.address : ""
+                    }
                     {...register("address", { required: true })}
                     cols={30}
                     rows={3}
@@ -155,6 +215,9 @@ const AddrestaurantModal = () => {
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="username"
+                    defaultValue={
+                      openModal ? props.editRestaurantData?.city : ""
+                    }
                     {...register("city", { required: true })}
                     placeholder="enter city name where restaurant is situated"
                   />
@@ -171,6 +234,9 @@ const AddrestaurantModal = () => {
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="username"
+                    defaultValue={
+                      openModal ? props.editRestaurantData?.state : ""
+                    }
                     {...register("state", { required: true })}
                     placeholder="enter city state where restaurant is situated"
                   />
@@ -188,8 +254,10 @@ const AddrestaurantModal = () => {
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="username"
                     {...register("country", { required: true })}
+                    defaultValue={
+                      openModal ? props.editRestaurantData?.country : "India"
+                    }
                     placeholder="enter city state where restaurant is situated"
-                    defaultValue={"India"}
                   />
                   {errors.country && (
                     <span className="text-red-600 text-sm">
@@ -199,7 +267,7 @@ const AddrestaurantModal = () => {
                 </div>
                 <div className="flex justify-center">
                   <button
-                    onClick={handleSubmit(onsubmit)}
+                    onClick={handleSubmit(openModal ? onUpdate : onsubmit)}
                     className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
                   >
                     {isPending ? "Submitting" : "Submit"}
@@ -210,7 +278,11 @@ const AddrestaurantModal = () => {
 
             <div className="flex justify-end items-center p-4 border-t border-gray-200 rounded-b dark:border-gray-600">
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  setIsOpen(false);
+                  reset();
+                  closeModal?.(false);
+                }}
                 className="text-white bg-blue-700 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:focus:ring-blue-800"
               >
                 Close

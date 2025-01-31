@@ -1,11 +1,39 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import AddrestaurantModal from "./addRestaurantModal";
 import { useGetAllRestaurantHooke } from "@/app/_hooks/restaurant/restaurant.hook";
 import { restaurantType } from "@/app/_types/restaurant.type";
+import { FaEdit } from "react-icons/fa";
 
 const RestaurantDataTable = () => {
-  const { data, isLoading, isError } = useGetAllRestaurantHooke();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [editRestaurantData, setEditRestaurantData] = useState({});
+
+  const { data, isLoading } = useGetAllRestaurantHooke();
+
+  const filteredData = data?.filter(
+    (item: restaurantType) =>
+      item?.name
+        ?.toLocaleLowerCase()
+        .includes(searchQuery.toLocaleLowerCase()) ||
+      item?.address
+        ?.toLocaleLowerCase()
+        .includes(searchQuery.toLocaleLowerCase()) ||
+      item?.city
+        ?.toLocaleLowerCase()
+        .includes(searchQuery.toLocaleLowerCase()) ||
+      item?.email
+        ?.toLocaleLowerCase()
+        .includes(searchQuery.toLocaleLowerCase()) ||
+      item?.state
+        ?.toLocaleLowerCase()
+        .includes(searchQuery.toLocaleLowerCase()),
+  );
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   return (
     <>
@@ -14,7 +42,8 @@ const RestaurantDataTable = () => {
           <div className="relative">
             <input
               className="bg-white w-full pr-11 h-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border-[2px] border-black rounded transition duration-300 ease focus:outline-none hover:border-blue-600 shadow-sm focus:shadow-md px-2"
-              placeholder="Search for invoice..."
+              placeholder="Search Restaurant..."
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button
               className="absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded "
@@ -38,99 +67,150 @@ const RestaurantDataTable = () => {
           </div>
         </div>
         <div>
-          <AddrestaurantModal />
+          <AddrestaurantModal
+            openModal={showModal}
+            editRestaurantData={editRestaurantData}
+            closeModal={closeModal}
+          />
         </div>
       </div>
 
       {!isLoading ? (
         <div className="relative w-full h-full overflow-x-auto text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
-          <table className="min-w-[1200px] w-full text-left table-auto">
+          <table className="w-full  text-left table-auto">
             <thead>
               <tr>
                 <th className="w-[800px] p-4 border-b border-slate-300 bg-slate-50">
-                  <p className="block text-sm font-normal leading-none text-slate-500">
+                  <p className="block text-sm font-medium leading-none text-slate-500">
                     Name
                   </p>
                 </th>
-                <th className="w-[150px] p-4 border-b border-slate-300 bg-slate-50">
-                  <p className="block text-sm font-normal leading-none text-slate-500">
+                <th className="w-[300px] p-4 border-b border-slate-300 bg-slate-50">
+                  <p className="block text-sm font-medium  leading-none text-slate-500">
                     Contact
                   </p>
                 </th>
-                <th className="w-[180px] p-4 border-b border-slate-300 bg-slate-50">
-                  <p className="block text-sm font-normal leading-none text-slate-500">
+                <th className="w-[300px] p-4 border-b border-slate-300 bg-slate-50">
+                  <p className="block text-sm font-medium leading-none text-slate-500">
                     Alternate Contact
                   </p>
                 </th>
-                <th className="w-[250px] p-4 border-b border-slate-300 bg-slate-50">
-                  <p className="block text-sm font-normal leading-none text-slate-500">
+                <th className="w-[800px] p-4 border-b border-slate-300 bg-slate-50">
+                  <p className="block text-sm font-medium leading-none text-slate-500">
                     Email
                   </p>
                 </th>
-                <th className="w-[300px] p-4 border-b border-slate-300 bg-slate-50">
-                  <p className="block text-sm font-normal leading-none text-slate-500">
+                <th className="w-[800px] p-4 border-b border-slate-300 bg-slate-50">
+                  <p className="block text-sm font-medium leading-none text-slate-500">
                     Address
                   </p>
                 </th>
-                <th className="w-[180px] p-4 border-b border-slate-300 bg-slate-50">
-                  <p className="block text-sm font-normal leading-none text-slate-500">
+                <th className="w-[600px] p-4 border-b border-slate-300 bg-slate-50">
+                  <p className="block text-sm font-medium leading-none text-slate-500">
                     City
                   </p>
                 </th>
-                <th className="w-[180px] p-4 border-b border-slate-300 bg-slate-50">
-                  <p className="block text-sm font-normal leading-none text-slate-500">
+                <th className="w-[600px] p-4 border-b border-slate-300 bg-slate-50">
+                  <p className="block text-sm font-medium leading-none text-slate-500">
                     State
                   </p>
                 </th>
-                <th className="w-[120px] p-4 border-b border-slate-300 bg-slate-50">
-                  <p className="block text-sm font-normal leading-none text-slate-500">
+                <th className="w-[800px] p-4 border-b border-slate-300 bg-slate-50">
+                  <p className="block text-sm font-medium leading-none text-slate-500">
                     Status
                   </p>
                 </th>
-                <th className="w-[180px] p-4 border-b border-slate-300 bg-slate-50">
-                  <p className="block text-sm font-normal leading-none text-slate-500">
+                <th className="w-[800px] p-4 border-b border-slate-300 bg-slate-50">
+                  <p className="block text-sm font-medium leading-none text-slate-500">
                     Approval Status
+                  </p>
+                </th>
+                <th className="w-[800px] p-4 border-b border-slate-300 bg-slate-50">
+                  <p className="block text-sm font-medium leading-none text-slate-500">
+                    Edit
                   </p>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {data &&
-                data?.map((item: restaurantType, index: number) => (
-                  <tr className="hover:bg-slate-50" key={index}>
+              {filteredData &&
+                filteredData?.map((item: restaurantType, index: number) => (
+                  <tr
+                    className={`hover:bg-green-100   ${
+                      index % 2 === 0 ? "bg-blue-50" : "bg-white"
+                    }  `}
+                    key={index}
+                  >
                     <td className="w-[200px] p-4 border-b border-slate-200 py-5">
-                      <p className="block font-semibold text-sm text-slate-800">
+                      <p className="text-sm font-medium text-slate-3 500 ">
                         {item?.name}
                       </p>
                     </td>
                     <td className="w-[150px] p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">{item?.contact}</p>
+                      <p className="text-sm font-medium text-slate-3 500">
+                        {item?.contact}
+                      </p>
                     </td>
                     <td className="w-[180px] p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm font-medium text-slate-3 500">
                         {item?.alternateContact}
                       </p>
                     </td>
                     <td className="w-[250px] p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">{item?.email}</p>
+                      <p className="text-sm font-medium text-slate-3 500">
+                        {item?.email}
+                      </p>
                     </td>
                     <td className="w-[300px] p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">{item?.address}</p>
-                    </td>
-                    <td className="w-[180px] p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">{item?.city}</p>
-                    </td>
-                    <td className="w-[180px] p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">{item?.country}</p>
-                    </td>
-                    <td className="w-[120px] p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">
-                        {item?.status ? "Active" : "Inactive"}
+                      <p className="text-sm font-medium text-slate-3 500">
+                        {item?.address}
                       </p>
                     </td>
                     <td className="w-[180px] p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">
-                        {item?.isApproved ? "Active" : "Inactive"}
+                      <p className="text-sm font-medium text-slate-3 500">
+                        {item?.city}
+                      </p>
+                    </td>
+                    <td className="w-[180px] p-4 border-b border-slate-200 py-5">
+                      <p className="text-sm font-medium text-slate-3 500">
+                        {item?.state}
+                      </p>
+                    </td>
+                    <td className="w-[120px] p-4 border-b border-slate-200 py-5">
+                      <p className="text-sm font-medium text-slate-3 500">
+                        {item?.status ? (
+                          <span className="text-green-600 font-semibold">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="text-red-600 font-semibold">
+                            Inactive
+                          </span>
+                        )}
+                      </p>
+                    </td>
+                    <td className="w-[180px] p-4 border-b border-slate-200 py-5">
+                      <p className="text-sm font-medium text-slate-3 500">
+                        {item?.isApproved ? (
+                          <span className="text-green-600 font-semibold">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="text-red-600 font-semibold">
+                            Inactive
+                          </span>
+                        )}
+                      </p>
+                    </td>
+                    <td className="w-[180px] p-4 border-b border-slate-200 py-5">
+                      <p className="text-sm font-medium text-slate-3 500  ">
+                        <FaEdit
+                          className="h-5 w-5 "
+                          onClick={() => {
+                            setShowModal(true);
+                            setEditRestaurantData(item);
+                          }}
+                        />
                       </p>
                     </td>
                   </tr>
