@@ -7,8 +7,6 @@ import { restaurantType } from "@/app/_types/restaurant.type";
 const RestaurantDataTable = () => {
   const { data, isLoading, isError } = useGetAllRestaurantHooke();
 
-  console.log("data0987", data);
-
   return (
     <>
       <div className="w-full  flex flex-col-reverse gap-3 md:flex-row    justify-between items-center mb-3 mt-1 ">

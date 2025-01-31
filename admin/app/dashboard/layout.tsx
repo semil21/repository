@@ -56,6 +56,8 @@ export default function DashboardLayout({
                 <span className="block text-xl font-bold">Item</span>
               </li>
             </Link>
+
+            <li>Log out</li>
           </ul>
         </nav>
       </aside>

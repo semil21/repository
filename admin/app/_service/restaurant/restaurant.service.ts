@@ -16,7 +16,7 @@ export const addRestaurantService = async (data: restaurantType) => {
       },
     );
 
-    return addRestaurant;
+    return addRestaurant?.data?.response;
   } catch (error) {
     throw error;
   }

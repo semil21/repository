@@ -7,10 +7,11 @@ import { useForm } from "react-hook-form";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AddrestaurantModal = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const queryCLient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -22,10 +23,16 @@ const AddrestaurantModal = () => {
 
   const onsubmit = async (data: restaurantType) => {
     mutate(data, {
-      onSuccess: () => {
+      onSuccess: (newRestaurant) => {
         toast.success("Restaurant Added Successfully", {
           position: "top-center",
         });
+        queryCLient.setQueryData(
+          ["all-restaurants"],
+          (oldRestaurantData: restaurantType[]) => {
+            return [...oldRestaurantData, newRestaurant];
+          },
+        );
         setIsOpen(false);
         reset();
       },

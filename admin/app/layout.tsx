@@ -18,7 +18,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 40,
+        cacheTime: 1000 * 60 * 40,
+      },
+    },
+  });
   return (
     <html lang="en">
       <body

@@ -14,5 +14,6 @@ export const useGetAllRestaurantHooke = () => {
   return useQuery({
     queryKey: ["all-restaurants"],
     queryFn: getAllRestaurantOfUser,
+    staleTime: 1000 * 60 * 40,
   });
 };
