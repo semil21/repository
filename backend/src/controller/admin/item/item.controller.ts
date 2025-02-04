@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import Item from "../../../schema/admin/item/item.schema";
 import expressAsyncHandler from "express-async-handler";
+import { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 
 export const createNewItem = expressAsyncHandler(
   async (req: Request, res: Response) => {
@@ -74,9 +76,49 @@ export const getAllItemsOfUser = expressAsyncHandler(
     try {
       const { user } = req.body;
 
-      const fetchAllItemsOfUSer = await Item.find({
-        user: user,
-      });
+      const userId = new mongoose.Types.ObjectId(user);
+
+      const aggregationPipeline = [
+        {
+          $match: {
+            user: userId,
+          },
+        },
+        {
+          $lookup: {
+            from: "restaurants",
+            localField: "restaurant",
+            foreignField: "_id",
+            as: "restaurant_details",
+          },
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category_details",
+          },
+        },
+        {
+          $unwind: "$restaurant_details",
+        },
+        {
+          $unwind: "$category_details",
+        },
+        {
+          $project: {
+            name: 1,
+            price: 1,
+            quantity: 1,
+            status: 1,
+            "restaurant_details.name": 1,
+            "category_details.name": 1,
+          },
+        },
+      ];
+
+      const fetchAllItemsOfUSer = await Item.aggregate(aggregationPipeline);
 
       if (fetchAllItemsOfUSer) {
         res.status(200).send({ response: fetchAllItemsOfUSer });
