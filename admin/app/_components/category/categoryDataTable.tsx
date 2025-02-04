@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import AddCategoryModal from "./addCategoryModal";
 import {
   useGetAllCategoriesHook,
@@ -13,8 +13,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { useQueryClient } from "@tanstack/react-query";
 
 const CategoryDataTable = () => {
-  const { data, error } = useGetAllCategoriesHook();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [queryData, setQueryData] = useState("");
 
+  const { data, error } = useGetAllCategoriesHook();
   const queryClient = useQueryClient();
 
   const { mutate } = useUpdateCategoryStatusHook();
@@ -23,6 +26,7 @@ const CategoryDataTable = () => {
       onSuccess: (updatedStatus) => {
         toast.success("Category status updated successfully", {
           position: "top-center",
+          autoClose: 5000,
         });
         queryClient.setQueryData(
           ["all-categories"],
@@ -41,6 +45,15 @@ const CategoryDataTable = () => {
     });
   };
 
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditData({});
+  };
+
+  const filteredCategoryData = data?.filter((item: categoryType) =>
+    item?.name?.toLocaleLowerCase().includes(queryData?.toLowerCase()),
+  );
+
   return (
     <>
       <ToastContainer />
@@ -50,6 +63,7 @@ const CategoryDataTable = () => {
             <input
               className="bg-white w-full pr-11 h-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border-[2px] border-black rounded transition duration-300 ease focus:outline-none hover:border-blue-600 shadow-sm focus:shadow-md px-2"
               placeholder="Search Category..."
+              onChange={(e) => setQueryData(e.target.value)}
             />
             <button
               className="absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded "
@@ -73,7 +87,11 @@ const CategoryDataTable = () => {
           </div>
         </div>
         <div>
-          <AddCategoryModal />
+          <AddCategoryModal
+            isEditModalOpen={isEditModalOpen}
+            closeEditModal={closeEditModal}
+            editData={editData}
+          />
         </div>
       </div>
 
@@ -91,22 +109,27 @@ const CategoryDataTable = () => {
                   Status
                 </p>
               </th>
+              <th className="w-[300px] p-4 border-b border-slate-300 bg-slate-50">
+                <p className="block text-sm font-medium  leading-none text-slate-500">
+                  Action
+                </p>
+              </th>
             </tr>
           </thead>
           <tbody>
             {error ? (
               <p>Failed to get All Categories</p>
             ) : (
-              data &&
-              data?.map((item: categoryType, index: number) => (
+              filteredCategoryData &&
+              filteredCategoryData?.map((item: categoryType, index: number) => (
                 <tr
                   key={index}
                   className={`hover:bg-green-100
                       ${index % 2 === 0 ? "bg-blue-50" : "bg-white"}
                               `}
                 >
-                  <td className="w-[200px] p-4 border-b border-slate-200 py-5">
-                    <p className="text-sm font-medium text-slate-3 500 ">
+                  <td className=" p-4 border-b  py-5   ">
+                    <p className=" w-[400px] text-sm font-medium text-slate-3 500 ">
                       {item?.name}
                     </p>
                   </td>
@@ -125,6 +148,19 @@ const CategoryDataTable = () => {
                             Inactive
                           </span>
                         )}
+                      </button>
+                    </p>
+                  </td>
+                  <td className="w-[200px] p-4 border-b border-slate-200 py-5">
+                    <p className="text-sm font-medium text-slate-3 500 ">
+                      <button
+                        className="border-[1px] w-[80px] rounded-md border-black font-bold py-2 px-4 bg-blue-500 text-white hover:bg-blue-700"
+                        onClick={() => {
+                          setIsEditModalOpen(true);
+                          setEditData(item);
+                        }}
+                      >
+                        <span>Update</span>
                       </button>
                     </p>
                   </td>

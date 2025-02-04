@@ -3,7 +3,7 @@ import axios from "axios";
 import dotenv from "dotenv";
 
 dotenv.config();
-export const useAddCategoryService = async (data: categoryType) => {
+export const addCategoryService = async (data: categoryType) => {
   try {
     const authToken = sessionStorage.getItem("session_id");
     const addData = await axios.post(
@@ -22,7 +22,7 @@ export const useAddCategoryService = async (data: categoryType) => {
   }
 };
 
-export const getAllCategoriesOfUser = async () => {
+export const getAllCategoriesOfUserService = async () => {
   try {
     const authToken = sessionStorage.getItem("session_id");
 
@@ -41,7 +41,7 @@ export const getAllCategoriesOfUser = async () => {
   }
 };
 
-export const updateCatgoryStatus = async (data: categoryType) => {
+export const updateCatgoryStatusService = async (data: categoryType) => {
   const authToken = sessionStorage.getItem("session_id");
   const { _id, status } = data;
   try {
@@ -56,6 +56,29 @@ export const updateCatgoryStatus = async (data: categoryType) => {
     );
 
     return updateStatus?.data?.response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateCategoryRecordService = async (data: categoryType) => {
+  try {
+    const authToken = sessionStorage.getItem("session_id");
+
+    console.log("poiu098", data);
+    const { _id } = data;
+
+    const updateCategory = await axios.put(
+      `${process.env.NEXT_PUBLIC_DB_URL}/category/update/${_id}`,
+      data,
+      {
+        headers: {
+          Authorization: authToken,
+        },
+      },
+    );
+
+    return updateCategory?.data?.response;
   } catch (error) {
     throw error;
   }

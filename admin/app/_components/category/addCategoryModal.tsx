@@ -1,5 +1,8 @@
 "use client";
-import { useAddCategryHook } from "@/app/_hooks/category/category.hook";
+import {
+  useAddCategryHook,
+  useUpdateCategoryHoook,
+} from "@/app/_hooks/category/category.hook";
 import { categoryType } from "@/app/_types/category.type";
 import React, { useState } from "react";
 
@@ -7,7 +10,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const AddCategoryModal = () => {
+
+type categoryModalType = {
+  isEditModalOpen?: boolean;
+  closeEditModal?: (value: boolean) => void;
+  editData?: categoryType;
+};
+const AddCategoryModal = (props: categoryModalType) => {
+  const { isEditModalOpen, closeEditModal, editData } = props;
+
   const [isOpen, setIsOpen] = useState(false);
   const {
     register,
@@ -18,6 +29,7 @@ const AddCategoryModal = () => {
 
   const queryClient = useQueryClient();
   const { mutate } = useAddCategryHook();
+  const updateMutation = useUpdateCategoryHoook();
 
   const onSubmit = async (data: categoryType) => {
     mutate(data, {
@@ -39,6 +51,32 @@ const AddCategoryModal = () => {
       },
     });
   };
+
+  const onUpdate = (data: categoryType) => {
+    data._id = editData?._id;
+    updateMutation.mutate(data, {
+      onSuccess: () => {
+        toast.success("Category Upated successfully");
+        closeEditModal?.(false);
+        reset();
+        queryClient.setQueryData(
+          ["all-categories"],
+          (oldCategoryData: categoryType[]) => {
+            return oldCategoryData.map((category) => {
+              if (category?._id === data?._id) {
+                return data;
+              }
+              return category;
+            });
+          },
+        );
+      },
+      onError: () => {
+        toast.error("Failed to update category record");
+      },
+    });
+  };
+
   return (
     <>
       <ToastContainer />
@@ -52,7 +90,7 @@ const AddCategoryModal = () => {
         </button>
       </div>
 
-      {isOpen && (
+      {(isOpen || isEditModalOpen) && (
         <div className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
           <div className="relative p-4 w-full max-w-2xl bg-white rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
@@ -61,7 +99,10 @@ const AddCategoryModal = () => {
               </h3>
               <button
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  setIsOpen(false);
+                  closeEditModal?.(false);
+                }}
               >
                 <svg
                   className="w-3 h-3"
@@ -94,6 +135,7 @@ const AddCategoryModal = () => {
                     type="text"
                     placeholder="Enter Category Name"
                     {...register("name", { required: true })}
+                    defaultValue={isEditModalOpen ? editData?.name : ""}
                   />
                   {errors.name && (
                     <span className="text-red-600 text-sm">
@@ -103,12 +145,21 @@ const AddCategoryModal = () => {
                 </div>
 
                 <div className="flex justify-center">
-                  <button
-                    className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
-                    onClick={handleSubmit(onSubmit)}
-                  >
-                    Submit
-                  </button>
+                  {!isEditModalOpen ? (
+                    <button
+                      className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
+                      onClick={handleSubmit(onSubmit)}
+                    >
+                      Submit
+                    </button>
+                  ) : (
+                    <button
+                      className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
+                      onClick={handleSubmit(onUpdate)}
+                    >
+                      Update
+                    </button>
+                  )}
                 </div>
               </form>
             </div>
@@ -116,7 +167,11 @@ const AddCategoryModal = () => {
             <div className="flex justify-end items-center p-4 border-t border-gray-200 rounded-b dark:border-gray-600">
               <button
                 className="text-white bg-blue-700 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:focus:ring-blue-800"
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  setIsOpen(false);
+                  closeEditModal?.(false);
+                  reset();
+                }}
               >
                 Close
               </button>
