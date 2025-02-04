@@ -40,3 +40,23 @@ export const getAllCategoriesOfUser = async () => {
     throw error;
   }
 };
+
+export const updateCatgoryStatus = async (data: categoryType) => {
+  const authToken = sessionStorage.getItem("session_id");
+  const { _id, status } = data;
+  try {
+    const updateStatus = await axios.put(
+      `${process.env.NEXT_PUBLIC_DB_URL}/category/update-status/${_id}`,
+      { status: status },
+      {
+        headers: {
+          Authorization: authToken,
+        },
+      },
+    );
+
+    return updateStatus?.data?.response;
+  } catch (error) {
+    throw error;
+  }
+};

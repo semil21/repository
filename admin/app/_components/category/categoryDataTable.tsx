@@ -1,16 +1,49 @@
 "use client";
 import React from "react";
 import AddCategoryModal from "./addCategoryModal";
-import { useGetAllCategoriesHook } from "@/app/_hooks/category/category.hook";
+import {
+  useGetAllCategoriesHook,
+  useUpdateCategoryStatusHook,
+} from "@/app/_hooks/category/category.hook";
 import { categoryType } from "@/app/_types/category.type";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 const CategoryDataTable = () => {
   const { data, error } = useGetAllCategoriesHook();
 
-  console.log("mutate", data);
+  const queryClient = useQueryClient();
+
+  const { mutate } = useUpdateCategoryStatusHook();
+  const handleStatusUpdate = (item: categoryType) => {
+    mutate(item, {
+      onSuccess: (updatedStatus) => {
+        toast.success("Category status updated successfully", {
+          position: "top-center",
+        });
+        queryClient.setQueryData(
+          ["all-categories"],
+          (oldCategoryData: categoryType[]) => {
+            return oldCategoryData?.map((category) =>
+              category._id === item._id
+                ? { ...category, status: updatedStatus }
+                : category,
+            );
+          },
+        );
+      },
+      onError: () => {
+        toast.error("Failed to update category status");
+      },
+    });
+  };
 
   return (
     <>
+      <ToastContainer />
       <div className="w-full  flex flex-col-reverse gap-3 md:flex-row    justify-between items-center mb-3 mt-1 ">
         <div className="w-full max-w-sm min-w-[200px] relative">
           <div className="relative">
@@ -79,7 +112,10 @@ const CategoryDataTable = () => {
                   </td>
                   <td className="w-[150px] p-4 border-b border-slate-200 py-5">
                     <p className="text-sm font-medium text-slate-3 500">
-                      <button className="bg-white border-[1px] w-[80px] rounded-md border-black text-white font-bold py-2 px-4 ">
+                      <button
+                        className="bg-white border-[1px] w-[80px] rounded-md border-black text-white font-bold py-2 px-4 "
+                        onClick={() => handleStatusUpdate(item)}
+                      >
                         {item?.status ? (
                           <span className="text-green-600 font-semibold">
                             Active

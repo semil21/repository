@@ -1,5 +1,6 @@
 import {
   getAllCategoriesOfUser,
+  updateCatgoryStatus,
   useAddCategoryService,
 } from "@/app/_service/category/category";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -14,5 +15,11 @@ export const useGetAllCategoriesHook = () => {
   return useQuery({
     queryKey: ["all-categories"],
     queryFn: getAllCategoriesOfUser,
+  });
+};
+
+export const useUpdateCategoryStatusHook = () => {
+  return useMutation({
+    mutationFn: updateCatgoryStatus,
   });
 };
