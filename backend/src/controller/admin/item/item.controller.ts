@@ -68,3 +68,27 @@ export const updateItemStatus = expressAsyncHandler(
     }
   },
 );
+
+export const getAllItemsOfUser = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { user } = req.body;
+
+      const fetchAllItemsOfUSer = await Item.find({
+        user: user,
+      });
+
+      if (fetchAllItemsOfUSer) {
+        res.status(200).send({ response: fetchAllItemsOfUSer });
+      } else {
+        res
+          .status(400)
+          .send({ response: "Failed to fetch all items of a user." });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .send({ response: "Server error, failed to get all iems of user" });
+    }
+  },
+);
