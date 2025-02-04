@@ -21,3 +21,22 @@ export const useAddCategoryService = async (data: categoryType) => {
     throw error;
   }
 };
+
+export const getAllCategoriesOfUser = async () => {
+  try {
+    const authToken = sessionStorage.getItem("session_id");
+
+    const fetchCategories = await axios.get(
+      `${process.env.NEXT_PUBLIC_DB_URL}/category/get-categories`,
+      {
+        headers: {
+          Authorization: authToken,
+        },
+      },
+    );
+
+    return fetchCategories?.data?.response;
+  } catch (error) {
+    throw error;
+  }
+};

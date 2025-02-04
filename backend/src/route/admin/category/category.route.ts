@@ -10,7 +10,7 @@ import verifyTokenExists from "../../../middleware/verify-token.middleware";
 const categoryRouter = express.Router();
 
 categoryRouter.post("/create", verifyTokenExists, createNewCategory);
-categoryRouter.post(
+categoryRouter.get(
   "/get-categories",
   verifyTokenExists,
   getAllCategoriesOfUser,

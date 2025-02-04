@@ -1,8 +1,11 @@
 "use client";
+import { useAddCategryHook } from "@/app/_hooks/category/category.hook";
+import { categoryType } from "@/app/_types/category.type";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 
-import { ToastContainer } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const AddCategoryModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,9 +13,32 @@ const AddCategoryModal = () => {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm();
 
-  const onSubmit = () => {};
+  const queryClient = useQueryClient();
+  const { mutate } = useAddCategryHook();
+
+  const onSubmit = async (data: categoryType) => {
+    mutate(data, {
+      onSuccess: (newCateogoryData) => {
+        toast.success("Category added successfully.", {
+          position: "top-center",
+        });
+        reset();
+        setIsOpen(false);
+        queryClient.setQueryData(
+          ["all-categories"],
+          (oldCategoryData: categoryType[]) => {
+            return [...oldCategoryData, newCateogoryData];
+          },
+        );
+      },
+      onError: () => {
+        toast.error("Failed to add new category");
+      },
+    });
+  };
   return (
     <>
       <ToastContainer />

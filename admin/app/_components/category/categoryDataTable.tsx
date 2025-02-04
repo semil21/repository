@@ -1,8 +1,14 @@
+"use client";
 import React from "react";
-import AddrestaurantModal from "../restaurant/addRestaurantModal";
 import AddCategoryModal from "./addCategoryModal";
+import { useGetAllCategoriesHook } from "@/app/_hooks/category/category.hook";
+import { categoryType } from "@/app/_types/category.type";
 
 const CategoryDataTable = () => {
+  const { data, error } = useGetAllCategoriesHook();
+
+  console.log("mutate", data);
+
   return (
     <>
       <div className="w-full  flex flex-col-reverse gap-3 md:flex-row    justify-between items-center mb-3 mt-1 ">
@@ -55,20 +61,40 @@ const CategoryDataTable = () => {
             </tr>
           </thead>
           <tbody>
-            <tr
-              className={`hover:bg-green-100
-                          bg-blue-50
-                        `}
-            >
-              <td className="w-[200px] p-4 border-b border-slate-200 py-5">
-                <p className="text-sm font-medium text-slate-3 500 ">Name</p>
-              </td>
-              <td className="w-[150px] p-4 border-b border-slate-200 py-5">
-                <p className="text-sm font-medium text-slate-3 500">
-                  Active : Inactive
-                </p>
-              </td>
-            </tr>
+            {error ? (
+              <p>Failed to get All Categories</p>
+            ) : (
+              data &&
+              data?.map((item: categoryType, index: number) => (
+                <tr
+                  key={index}
+                  className={`hover:bg-green-100
+                      ${index % 2 === 0 ? "bg-blue-50" : "bg-white"}
+                              `}
+                >
+                  <td className="w-[200px] p-4 border-b border-slate-200 py-5">
+                    <p className="text-sm font-medium text-slate-3 500 ">
+                      {item?.name}
+                    </p>
+                  </td>
+                  <td className="w-[150px] p-4 border-b border-slate-200 py-5">
+                    <p className="text-sm font-medium text-slate-3 500">
+                      <button className="bg-white border-[1px] w-[80px] rounded-md border-black text-white font-bold py-2 px-4 ">
+                        {item?.status ? (
+                          <span className="text-green-600 font-semibold">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="text-red-600 font-semibold">
+                            Inactive
+                          </span>
+                        )}
+                      </button>
+                    </p>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
