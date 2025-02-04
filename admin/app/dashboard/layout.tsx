@@ -49,7 +49,7 @@ export default function DashboardLayout({
                 <span className="block text-xl font-bold">Category</span>
               </li>
             </Link>
-            <Link href="/dashboard/category">
+            <Link href="/dashboard/item">
               <li className="flex items-center gap-3 text-black hover:bg-blue-600 hover:text-white p-2	">
                 <IoFastFoodOutline className="text-2xl" />
 
