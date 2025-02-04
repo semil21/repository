@@ -23,3 +23,22 @@ export const addNewItemService = async (data: itemType) => {
     throw error;
   }
 };
+
+export const getAllItemsOfUser = async () => {
+  try {
+    const auth_token = sessionStorage.getItem("session_id");
+
+    const fetchRecords = await axios.get(
+      `${process.env.NEXT_PUBLIC_DB_URL}/item/all-items`,
+      {
+        headers: {
+          Authorization: auth_token,
+        },
+      },
+    );
+
+    return fetchRecords?.data?.response;
+  } catch (error) {
+    throw error;
+  }
+};
