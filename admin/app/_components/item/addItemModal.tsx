@@ -1,5 +1,6 @@
 "use client";
 import { useGetAllCategoriesHook } from "@/app/_hooks/category/category.hook";
+import { useAddItemHook } from "@/app/_hooks/item/item.hook";
 import { useGetAllRestaurantHooke } from "@/app/_hooks/restaurant/restaurant.hook";
 import { categoryType } from "@/app/_types/category.type";
 import { itemType } from "@/app/_types/item.type";
@@ -7,21 +8,42 @@ import { restaurantType } from "@/app/_types/restaurant.type";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const AddItemModal = () => {
   const [showModal, setShowModal] = useState(false);
 
   const { data: categories } = useGetAllCategoriesHook();
   const { data: restaurants } = useGetAllRestaurantHooke();
 
+  const addItemMutation = useAddItemHook();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
-  const onSubmit = (data: itemType) => console.log("data", data);
+  const onSubmit = (data: itemType) => {
+    addItemMutation.mutate(data, {
+      onSuccess: () => {
+        toast.success("Item added successfully");
+        reset();
+        setShowModal(false);
+      },
+
+      onError: () => {
+        toast.error("Failed to add new item");
+      },
+    });
+  };
+
   return (
     <>
+      <ToastContainer />
+
       <div className="flex justify-center ">
         <button
           onClick={() => setShowModal(true)}
@@ -103,7 +125,7 @@ const AddItemModal = () => {
                       categories
                         .filter((item: categoryType) => item.status === true)
                         .map((item: categoryType, index: number) => (
-                          <option value={item.name} key={index}>
+                          <option value={item._id} key={index}>
                             {item.name}
                           </option>
                         ))}

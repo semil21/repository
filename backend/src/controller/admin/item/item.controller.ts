@@ -13,9 +13,9 @@ export const createNewItem = expressAsyncHandler(
         res.status(400).send({ response: "Failed to save new item" });
       }
     } catch (error) {
-      res
-        .status(500)
-        .send({ response: "Server error, failed to create new item" });
+      res.status(500).send({
+        response: "Server error, failed to create new item",
+      });
     }
   },
 );
