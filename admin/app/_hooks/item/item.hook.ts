@@ -1,6 +1,7 @@
 import {
   addNewItemService,
   getAllItemsOfUser,
+  updateItemRecord,
   updateItemStatus,
 } from "@/app/_service/item/item.service";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -18,8 +19,14 @@ export const useAllitemshook = () => {
   });
 };
 
-export const useItemUdateHook = () => {
+export const useItemStatusUpdateHook = () => {
   return useMutation({
     mutationFn: updateItemStatus,
+  });
+};
+
+export const useItemUpdateHook = () => {
+  return useMutation({
+    mutationFn: updateItemRecord,
   });
 };

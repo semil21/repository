@@ -1,6 +1,6 @@
 "use client";
 import { useGetAllCategoriesHook } from "@/app/_hooks/category/category.hook";
-import { useAddItemHook } from "@/app/_hooks/item/item.hook";
+import { useAddItemHook, useItemUpdateHook } from "@/app/_hooks/item/item.hook";
 import { useGetAllRestaurantHooke } from "@/app/_hooks/restaurant/restaurant.hook";
 import { categoryType } from "@/app/_types/category.type";
 import { itemType, itemTypes } from "@/app/_types/item.type";
@@ -26,8 +26,10 @@ const AddItemModal = (props: addItemModalType) => {
   const { data: categories } = useGetAllCategoriesHook();
   const { data: restaurants } = useGetAllRestaurantHooke();
 
-  const addItemMutation = useAddItemHook();
   const queryCLient = useQueryClient();
+
+  const addItemMutation = useAddItemHook();
+  const updateItem = useItemUpdateHook();
 
   const {
     register,
@@ -53,7 +55,28 @@ const AddItemModal = (props: addItemModalType) => {
     });
   };
 
-  const onUpdate = () => {};
+  const onUpdate = async (data: itemType) => {
+    data._id = editData?._id;
+
+    updateItem.mutate(data, {
+      onSuccess: () => {
+        toast.success("Item Updated successfully");
+        queryCLient.setQueryData(["all-items"], (oldItems: itemType[]) => {
+          return oldItems.map((item) => {
+            if (item._id === data._id) {
+              return data;
+            }
+            return item;
+          });
+        });
+        reset();
+        setShowModal(false);
+      },
+      onError: () => {
+        toast.error("Failed to edit item");
+      },
+    });
+  };
 
   return (
     <>
@@ -139,6 +162,7 @@ const AddItemModal = (props: addItemModalType) => {
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="category"
                     {...register("category", { required: true })}
+                    defaultValue={editData ? editData.category?.name : ""}
                   >
                     {categories &&
                       categories

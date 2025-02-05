@@ -64,3 +64,24 @@ export const updateItemStatus = async (data: itemType) => {
     throw error;
   }
 };
+
+export const updateItemRecord = async (data: itemType) => {
+  try {
+    console.log("fff", data);
+    const auth_token = sessionStorage.getItem("session_id");
+    const { _id } = data;
+    const updateItem = await axios.put(
+      `${process.env.NEXT_PUBLIC_DB_URL}/item/update/${_id}`,
+      data,
+      {
+        headers: {
+          Authorization: auth_token,
+        },
+      },
+    );
+
+    return updateItem?.data?.response;
+  } catch (error) {
+    throw error;
+  }
+};

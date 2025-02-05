@@ -1,7 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import AddItemModal from "./addItemModal";
-import { useAllitemshook, useItemUdateHook } from "@/app/_hooks/item/item.hook";
+import {
+  useAllitemshook,
+  useItemStatusUpdateHook,
+} from "@/app/_hooks/item/item.hook";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,7 +18,7 @@ const ItemDataTable = () => {
 
   const { data, error } = useAllitemshook();
 
-  const updateItemStatus = useItemUdateHook();
+  const updateItemStatus = useItemStatusUpdateHook();
 
   const queryClient = useQueryClient();
   const handleStatusUpdate = async (_id: string, status: boolean) => {

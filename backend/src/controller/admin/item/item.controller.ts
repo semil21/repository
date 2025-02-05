@@ -9,8 +9,8 @@ export const createNewItem = expressAsyncHandler(
       const saveNewRecord = await Item.create(req.body);
 
       const populateRecord = await saveNewRecord.populate([
-        { path: "category", select: "name" },
-        { path: "restaurant", select: "name" },
+        { path: "category" },
+        { path: "restaurant" },
       ]);
 
       if (populateRecord) {
@@ -43,7 +43,10 @@ export const updateItem = expressAsyncHandler(
         res.status(400).send({ response: "Failed to update item record" });
       }
     } catch (error) {
-      res.status(500).send({ response: "Server error, failed to update item" });
+      res.status(500).send({
+        response: "Server error, failed to update item",
+        error: error,
+      });
     }
   },
 );
