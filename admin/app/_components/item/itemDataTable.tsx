@@ -5,7 +5,8 @@ import { useAllitemshook } from "@/app/_hooks/item/item.hook";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { itemType } from "@/app/_types/item.type";
+import { itemTypes } from "@/app/_types/item.type";
+
 const ItemDataTable = () => {
   const { data, error } = useAllitemshook();
 
@@ -50,7 +51,7 @@ const ItemDataTable = () => {
         <table className="w-full  text-left table-auto">
           <thead>
             <tr>
-              <th className="w-[800px] p-4 border-b border-slate-300 bg-slate-50">
+              <th className="w-[400px] p-4 border-b border-slate-300 bg-slate-50">
                 <p className="block text-sm font-medium leading-none text-slate-500">
                   Name
                 </p>
@@ -80,6 +81,11 @@ const ItemDataTable = () => {
                   Status
                 </p>
               </th>
+              <th className="w-[300px] p-4 border-b border-slate-300 bg-slate-50">
+                <p className="block text-sm font-medium  leading-none text-slate-500">
+                  Action
+                </p>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -87,7 +93,7 @@ const ItemDataTable = () => {
               <p>Failed to get All Categories</p>
             ) : (
               data &&
-              data?.map((item: itemType, index: number) => (
+              data?.map((item: itemTypes, index: number) => (
                 <tr
                   key={index}
                   className={`hover:bg-green-100
@@ -100,22 +106,22 @@ const ItemDataTable = () => {
                     </p>
                   </td>
                   <td className=" p-4 border-b  py-5   ">
-                    <p className=" w-[400px] text-sm font-medium text-slate-3 500 ">
-                      {item?.category}
+                    <p className=" w-[300px] text-sm font-medium text-slate-3 500 ">
+                      {item?.category?.name}
                     </p>
                   </td>
                   <td className=" p-4 border-b  py-5   ">
-                    <p className=" w-[400px] text-sm font-medium text-slate-3 500 ">
-                      {item?.restaurant}
+                    <p className=" w-[300px] text-sm font-medium text-slate-3 500 ">
+                      {item?.restaurant?.name}
                     </p>
                   </td>
                   <td className=" p-4 border-b  py-5   ">
-                    <p className=" w-[400px] text-sm font-medium text-slate-3 500 ">
+                    <p className=" w-[150px] text-sm font-medium text-slate-3 500 ">
                       {item?.price}
                     </p>
                   </td>
                   <td className=" p-4 border-b  py-5   ">
-                    <p className=" w-[400px] text-sm font-medium text-slate-3 500 ">
+                    <p className=" w-[150px] text-sm font-medium text-slate-3 500 ">
                       {item?.quantity}
                     </p>
                   </td>

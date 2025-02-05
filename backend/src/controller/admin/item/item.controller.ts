@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import Item from "../../../schema/admin/item/item.schema";
 import expressAsyncHandler from "express-async-handler";
-import { ObjectId } from "mongoose";
 import mongoose from "mongoose";
 
 export const createNewItem = expressAsyncHandler(
@@ -9,8 +8,13 @@ export const createNewItem = expressAsyncHandler(
     try {
       const saveNewRecord = await Item.create(req.body);
 
-      if (saveNewRecord) {
-        res.status(200).send({ response: saveNewRecord });
+      const populateRecord = await saveNewRecord.populate([
+        { path: "category", select: "name" },
+        { path: "restaurant", select: "name" },
+      ]);
+
+      if (populateRecord) {
+        res.status(200).send({ response: populateRecord });
       } else {
         res.status(400).send({ response: "Failed to save new item" });
       }
@@ -89,7 +93,7 @@ export const getAllItemsOfUser = expressAsyncHandler(
             from: "restaurants",
             localField: "restaurant",
             foreignField: "_id",
-            as: "restaurant_details",
+            as: "restaurant",
           },
         },
         {
@@ -97,14 +101,14 @@ export const getAllItemsOfUser = expressAsyncHandler(
             from: "categories",
             localField: "category",
             foreignField: "_id",
-            as: "category_details",
+            as: "category",
           },
         },
         {
-          $unwind: "$restaurant_details",
+          $unwind: "$restaurant",
         },
         {
-          $unwind: "$category_details",
+          $unwind: "$category",
         },
         {
           $project: {
@@ -112,8 +116,8 @@ export const getAllItemsOfUser = expressAsyncHandler(
             price: 1,
             quantity: 1,
             status: 1,
-            "restaurant_details.name": 1,
-            "category_details.name": 1,
+            "restaurant.name": 1,
+            "category.name": 1,
           },
         },
       ];

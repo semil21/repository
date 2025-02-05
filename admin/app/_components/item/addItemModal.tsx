@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AddItemModal = () => {
   const [showModal, setShowModal] = useState(false);
@@ -18,6 +19,7 @@ const AddItemModal = () => {
   const { data: restaurants } = useGetAllRestaurantHooke();
 
   const addItemMutation = useAddItemHook();
+  const queryCLient = useQueryClient();
 
   const {
     register,
@@ -28,8 +30,11 @@ const AddItemModal = () => {
 
   const onSubmit = (data: itemType) => {
     addItemMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (newItemData) => {
         toast.success("Item added successfully");
+        queryCLient.setQueryData(["all-items"], (oldItems: itemType[]) => {
+          return [...oldItems, newItemData];
+        });
         reset();
         setShowModal(false);
       },
