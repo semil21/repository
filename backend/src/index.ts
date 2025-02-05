@@ -11,6 +11,8 @@ import itemRouter from "./route/admin/item/item.route";
 
 import superAdminRouter from "./route/super-admin/super-admin/super-admin.route";
 import superAdminRestaurantRouter from "./route/super-admin/restaurant/super-admin-restaurant.router";
+import superAdminCategoryRouter from "./route/super-admin/category/super-admin-category";
+import superAdminITemRouter from "./route/super-admin/item/super-admin-item.route";
 
 connectDatabase();
 
@@ -24,6 +26,8 @@ app.use(Express.json());
 // super admin routes
 app.use("/super-admin", superAdminRouter);
 app.use("/super-admin/restaurant", superAdminRestaurantRouter);
+app.use("/super-admin/category", superAdminCategoryRouter);
+app.use("/super-admin/item", superAdminITemRouter);
 
 // admin routes
 app.use("/admin", adminRouter);
