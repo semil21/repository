@@ -12,13 +12,11 @@ export interface itemType {
 export interface itemTypes {
   _id?: string;
   user?: string;
-  restaurant: {
-    _id?: string;
+  restaurant?: {
     name?: string;
   };
   name?: string;
-  category: {
-    _id?: string;
+  category?: {
     name?: string;
   };
   price?: number;

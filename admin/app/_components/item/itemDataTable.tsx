@@ -1,14 +1,50 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import AddItemModal from "./addItemModal";
-import { useAllitemshook } from "@/app/_hooks/item/item.hook";
+import { useAllitemshook, useItemUdateHook } from "@/app/_hooks/item/item.hook";
 
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { itemTypes } from "@/app/_types/item.type";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 const ItemDataTable = () => {
+  const [openModal, setOpenModal] = useState(false);
+  const [editData, setEditData] = useState<itemTypes>({});
+
   const { data, error } = useAllitemshook();
+
+  const updateItemStatus = useItemUdateHook();
+
+  const queryClient = useQueryClient();
+  const handleStatusUpdate = async (_id: string, status: boolean) => {
+    const data = { _id: _id, status };
+
+    if (data) {
+      updateItemStatus.mutate(data, {
+        onSuccess: () => {
+          toast.success("Item status updated successfully");
+          queryClient.setQueryData(["all-items"], (oldItems: itemTypes[]) => {
+            return oldItems.map((item) => {
+              if (item._id === _id) {
+                return { ...item, status: !status };
+              }
+              return item;
+            });
+          });
+        },
+        onError: () => {
+          toast.error("Failed to update item status");
+        },
+      });
+    }
+  };
+
+  const closeModal = (status: boolean) => {
+    setOpenModal(status);
+    setEditData({});
+  };
 
   return (
     <>
@@ -43,7 +79,11 @@ const ItemDataTable = () => {
           </div>
         </div>
         <div>
-          <AddItemModal />
+          <AddItemModal
+            openModal={openModal}
+            closeModal={closeModal}
+            editData={editData}
+          />
         </div>
       </div>
 
@@ -127,7 +167,12 @@ const ItemDataTable = () => {
                   </td>
                   <td className="w-[150px] p-4 border-b border-slate-200 py-5">
                     <p className="text-sm font-medium text-slate-3 500">
-                      <button className="bg-white border-[1px] w-[80px] rounded-md border-black text-white font-bold py-2 px-4 ">
+                      <button
+                        className="bg-white border-[1px] w-[80px] rounded-md border-black text-white font-bold py-2 px-4 "
+                        onClick={() =>
+                          handleStatusUpdate(item?._id, item?.status)
+                        }
+                      >
                         {item?.status ? (
                           <span className="text-green-600 font-semibold">
                             Active
@@ -142,7 +187,13 @@ const ItemDataTable = () => {
                   </td>
                   <td className="w-[200px] p-4 border-b border-slate-200 py-5">
                     <p className="text-sm font-medium text-slate-3 500 ">
-                      <button className="border-[1px] w-[80px] rounded-md border-black font-bold py-2 px-4 bg-blue-500 text-white hover:bg-blue-700">
+                      <button
+                        className="border-[1px] w-[80px] rounded-md border-black font-bold py-2 px-4 bg-blue-500 text-white hover:bg-blue-700"
+                        onClick={() => {
+                          setOpenModal(true);
+                          setEditData(item);
+                        }}
+                      >
                         <span>Update</span>
                       </button>
                     </p>

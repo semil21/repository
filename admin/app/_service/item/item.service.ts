@@ -42,3 +42,25 @@ export const getAllItemsOfUser = async () => {
     throw error;
   }
 };
+
+export const updateItemStatus = async (data: itemType) => {
+  try {
+    const auth_token = sessionStorage.getItem("session_id");
+
+    const { _id, status } = data;
+
+    const updateRecord = await axios.put(
+      `${process.env.NEXT_PUBLIC_DB_URL}/item/update-status/${_id}`,
+      { status: status },
+      {
+        headers: {
+          Authorization: auth_token,
+        },
+      },
+    );
+
+    return updateRecord?.data?.response?.status;
+  } catch (error) {
+    throw error;
+  }
+};

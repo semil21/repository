@@ -3,7 +3,7 @@ import { useGetAllCategoriesHook } from "@/app/_hooks/category/category.hook";
 import { useAddItemHook } from "@/app/_hooks/item/item.hook";
 import { useGetAllRestaurantHooke } from "@/app/_hooks/restaurant/restaurant.hook";
 import { categoryType } from "@/app/_types/category.type";
-import { itemType } from "@/app/_types/item.type";
+import { itemType, itemTypes } from "@/app/_types/item.type";
 import { restaurantType } from "@/app/_types/restaurant.type";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -12,8 +12,16 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useQueryClient } from "@tanstack/react-query";
 
-const AddItemModal = () => {
+type addItemModalType = {
+  openModal?: boolean;
+  closeModal?: (value: boolean) => void;
+  editData?: itemTypes;
+};
+
+const AddItemModal = (props: addItemModalType) => {
   const [showModal, setShowModal] = useState(false);
+
+  const { openModal, closeModal, editData } = props;
 
   const { data: categories } = useGetAllCategoriesHook();
   const { data: restaurants } = useGetAllRestaurantHooke();
@@ -45,6 +53,8 @@ const AddItemModal = () => {
     });
   };
 
+  const onUpdate = () => {};
+
   return (
     <>
       <ToastContainer />
@@ -58,7 +68,7 @@ const AddItemModal = () => {
         </button>
       </div>
 
-      {showModal && (
+      {(showModal || openModal) && (
         <div className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
           <div className="relative p-4 w-full max-w-2xl bg-white rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
@@ -67,7 +77,11 @@ const AddItemModal = () => {
               </h3>
               <button
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  reset();
+                  closeModal(false);
+                }}
               >
                 <svg
                   className="w-3 h-3"
@@ -152,6 +166,7 @@ const AddItemModal = () => {
                     type="text"
                     placeholder="Enter Item Name"
                     {...register("name", { required: true })}
+                    defaultValue={openModal ? editData?.name : ""}
                   />
                   {errors.name && (
                     <span className="text-red-600 text-sm">
@@ -170,6 +185,7 @@ const AddItemModal = () => {
                     type="number"
                     placeholder="Enter Item Price"
                     {...register("price", { required: true })}
+                    defaultValue={openModal ? editData?.price : ""}
                   />
                   {errors.price && (
                     <span className="text-red-600 text-sm">
@@ -188,6 +204,7 @@ const AddItemModal = () => {
                     type="text"
                     placeholder="Enter item quantity i.e 400 g , 1 litre etc"
                     {...register("quantity", { required: true })}
+                    defaultValue={openModal ? editData?.quantity : ""}
                   />
                   {errors.quantity && (
                     <span className="text-red-600 text-sm">
@@ -197,12 +214,21 @@ const AddItemModal = () => {
                 </div>
 
                 <div className="flex justify-center">
-                  <button
-                    className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
-                    onClick={handleSubmit(onSubmit)}
-                  >
-                    Submit
-                  </button>
+                  {openModal ? (
+                    <button
+                      className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
+                      onClick={handleSubmit(onUpdate)}
+                    >
+                      Update
+                    </button>
+                  ) : (
+                    <button
+                      className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
+                      onClick={handleSubmit(onSubmit)}
+                    >
+                      Submit
+                    </button>
+                  )}
                 </div>
               </form>
             </div>
@@ -210,7 +236,11 @@ const AddItemModal = () => {
             <div className="flex justify-end items-center p-4 border-t border-gray-200 rounded-b dark:border-gray-600">
               <button
                 className="text-white bg-blue-700 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:focus:ring-blue-800"
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  reset();
+                  closeModal(false);
+                }}
               >
                 Close
               </button>
