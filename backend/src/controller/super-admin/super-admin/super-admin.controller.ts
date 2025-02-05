@@ -4,6 +4,10 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import Admin from "../../../schema/admin/admin/admin.schema";
+import Category from "../../../schema/admin/category/category.schema";
+import Item from "../../../schema/admin/item/item.schema";
+import Restaurant from "../../../schema/admin/restaurant/restaurant.schema";
 
 dotenv.config();
 
@@ -65,6 +69,32 @@ export const superAdminLogin = expressAsyncHandler(
       }
     } catch (error) {
       res.status(500).send({ response: "Server error, failed to log in" });
+    }
+  },
+);
+
+export const countDocumentRecords = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const [adminsCount, categoriesCount, itemsCount, restaurantsCount] =
+        await Promise.all([
+          Admin.countDocuments(),
+          Category.countDocuments(),
+          Item.countDocuments(),
+          Restaurant.countDocuments(),
+        ]);
+
+      if (adminsCount && categoriesCount && itemsCount && restaurantsCount) {
+        res
+          .status(200)
+          .send({ adminsCount, categoriesCount, itemsCount, restaurantsCount });
+      } else {
+        res.status(400).send({ response: "Failed to get count of records" });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .send({ response: "Server error, failed to get count of records" });
     }
   },
 );
