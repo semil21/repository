@@ -20,8 +20,9 @@ export default function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden">
+      {/* border-[#dfbb5d] */}
       <aside
-        className={`fixed z-30 inset-y-0 left-0 transform bg-neutral-50		 text-black w-64 p-4 transition-transform duration-300 ease-in-out
+        className={`fixed z-30 inset-y-0 left-0 transform bg-[#f9f7f7]	 border-r-[.3rem] border-black  	 text-black w-64 p-4 transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0 lg:static lg:inset-0`}
       >

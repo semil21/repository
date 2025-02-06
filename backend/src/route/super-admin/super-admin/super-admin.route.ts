@@ -9,6 +9,6 @@ const superAdminRouter = express.Router();
 
 superAdminRouter.post("/create", createNewSuperAdmin);
 superAdminRouter.post("/login", superAdminLogin);
-superAdminRouter.post("/count", countDocumentRecords);
+superAdminRouter.get("/count", countDocumentRecords);
 
 export default superAdminRouter;

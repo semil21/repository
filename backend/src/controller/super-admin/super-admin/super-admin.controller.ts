@@ -87,7 +87,14 @@ export const countDocumentRecords = expressAsyncHandler(
       if (adminsCount && categoriesCount && itemsCount && restaurantsCount) {
         res
           .status(200)
-          .send({ adminsCount, categoriesCount, itemsCount, restaurantsCount });
+          .send({
+            response: {
+              adminsCount,
+              categoriesCount,
+              itemsCount,
+              restaurantsCount,
+            },
+          });
       } else {
         res.status(400).send({ response: "Failed to get count of records" });
       }

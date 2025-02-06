@@ -13,7 +13,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 40,
+      cacheTime: 1000 * 60 * 40,
+    },
+  },
+});
 
 export default function RootLayout({
   children,
