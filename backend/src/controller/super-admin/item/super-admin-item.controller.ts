@@ -5,7 +5,10 @@ import { Request, Response } from "express";
 export const getAllItems = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const fetchRecords = await Item.find().populate("restaurant");
+      const fetchRecords = await Item.find().populate([
+        "category",
+        "restaurant",
+      ]);
 
       if (fetchRecords) {
         res.status(200).send({ response: fetchRecords });
