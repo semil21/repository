@@ -9,6 +9,7 @@ import { IoFastFoodOutline } from "react-icons/io5";
 import { FaHotel } from "react-icons/fa";
 import { GrUserAdmin } from "react-icons/gr";
 import { MdOutlineLogin } from "react-icons/md";
+import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
 
 export default function DashboardLayout({
   children,
@@ -67,6 +68,12 @@ export default function DashboardLayout({
               <li className="flex items-center gap-3 text-black hover:bg-blue-600 hover:text-white p-2">
                 <IoFastFoodOutline className="text-2xl" />
                 <span className="block text-xl font-bold">Item</span>
+              </li>
+            </Link>
+            <Link href="/dashboard/report">
+              <li className="flex items-center gap-3 text-black hover:bg-blue-600 hover:text-white p-2">
+                <HiOutlineClipboardDocumentList className="text-2xl" />
+                <span className="block text-xl font-bold">Report</span>
               </li>
             </Link>
           </ul>
