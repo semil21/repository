@@ -85,16 +85,14 @@ export const countDocumentRecords = expressAsyncHandler(
         ]);
 
       if (adminsCount && categoriesCount && itemsCount && restaurantsCount) {
-        res
-          .status(200)
-          .send({
-            response: {
-              adminsCount,
-              categoriesCount,
-              itemsCount,
-              restaurantsCount,
-            },
-          });
+        res.status(200).send({
+          response: {
+            adminsCount,
+            categoriesCount,
+            itemsCount,
+            restaurantsCount,
+          },
+        });
       } else {
         res.status(400).send({ response: "Failed to get count of records" });
       }
@@ -102,6 +100,24 @@ export const countDocumentRecords = expressAsyncHandler(
       res
         .status(500)
         .send({ response: "Server error, failed to get count of records" });
+    }
+  },
+);
+
+export const getAllAdmins = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const fetchRecords = await Admin.find();
+
+      if (fetchRecords) {
+        res.status(200).send({ response: fetchRecords });
+      } else {
+        res.status(400).send({ response: "Failed to fetch all admin records" });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .send({ response: "Server error, failed to get all admin details" });
     }
   },
 );
