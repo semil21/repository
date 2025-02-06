@@ -9,13 +9,13 @@ const itemSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Restaurant",
   },
-  name: {
-    type: String,
-    require: true,
-  },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
+  },
+  name: {
+    type: String,
+    require: true,
   },
   price: {
     type: Number,

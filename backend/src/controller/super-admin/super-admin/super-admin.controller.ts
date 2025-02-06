@@ -122,23 +122,26 @@ export const getAllAdmins = expressAsyncHandler(
   },
 );
 
-export const getCompleteAdminDetails = expressAsyncHandler(
+export const getCompleteRestaurantDetails = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { restaurantId } = req.params;
+      const aggregationPipeline = [
+        {
+          $lookup: {
+            from: "items",
+            localField: "_id",
+            foreignField: "category",
+            as: "items",
+          },
+        },
+      ];
 
-      const [restaurantData, categoriesData, itemsData] = await Promise.all([
-        Restaurant.find({ user: restaurantId }).lean(),
-        Category.find({ user: restaurantId }).lean(),
-        Item.find({ user: restaurantId }).lean(),
-      ]);
+      const aggregatedResult = await Category.aggregate(aggregationPipeline);
 
-      if (restaurantData && categoriesData && itemsData) {
+      if (aggregatedResult) {
         res.status(200).send({
-          response: "Data fetched successfully",
-          restaurantData,
-          categoriesData,
-          itemsData,
+          textResponse: "Data fetched successfully.",
+          response: aggregatedResult,
         });
       } else {
         res.status(400).send({ response: "Failed to fetch all admin details" });

@@ -4,7 +4,7 @@ import {
   superAdminLogin,
   countDocumentRecords,
   getAllAdmins,
-  getCompleteAdminDetails,
+  getCompleteRestaurantDetails,
 } from "../../../controller/super-admin/super-admin/super-admin.controller";
 import verifyTokenExists from "../../../middleware/verify-token.middleware";
 
@@ -17,7 +17,7 @@ superAdminRouter.get("/get-all-admins", verifyTokenExists, getAllAdmins);
 superAdminRouter.get(
   "/get-admin-details/:restaurantId",
   verifyTokenExists,
-  getCompleteAdminDetails,
+  getCompleteRestaurantDetails,
 );
 
 export default superAdminRouter;
