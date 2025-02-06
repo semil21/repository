@@ -121,3 +121,32 @@ export const getAllAdmins = expressAsyncHandler(
     }
   },
 );
+
+export const getCompleteAdminDetails = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { restaurantId } = req.params;
+
+      const [restaurantData, categoriesData, itemsData] = await Promise.all([
+        Restaurant.find({ user: restaurantId }).lean(),
+        Category.find({ user: restaurantId }).lean(),
+        Item.find({ user: restaurantId }).lean(),
+      ]);
+
+      if (restaurantData && categoriesData && itemsData) {
+        res.status(200).send({
+          response: "Data fetched successfully",
+          restaurantData,
+          categoriesData,
+          itemsData,
+        });
+      } else {
+        res.status(400).send({ response: "Failed to fetch all admin details" });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .send({ response: "Server error, failed to get all admin details" });
+    }
+  },
+);

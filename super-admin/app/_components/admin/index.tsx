@@ -82,7 +82,7 @@ const AdminDataTable = () => {
 
               <th className="w-[300px] p-4 border-b border-slate-300 bg-slate-50">
                 <p className="block text-sm font-medium  leading-none text-slate-500">
-                  Aadhar NO
+                  Aadhar No
                 </p>
               </th>
 
