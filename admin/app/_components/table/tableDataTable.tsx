@@ -26,7 +26,7 @@ const TableDataTable = () => {
               {item?.address}, {item?.city}
             </h1>
 
-            <AddTableModal />
+            <AddTableModal restaurantId={item?._id} />
             <table className="w-full border-collapse border-2 border-black mt-4">
               <thead>
                 <tr className="border-b-2 border-black bg-gray-200">

@@ -9,3 +9,9 @@ export type tableType = {
     capacity?: number;
   }>;
 };
+
+export type addNewTable = {
+  restaurant?: string;
+  number?: number;
+  capacity?: number;
+};

@@ -1,10 +1,48 @@
 "use client";
+import { useAddNewTableHook } from "@/app/_hooks/table/table.hook";
+import { addNewTable } from "@/app/_types/table.type";
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { ToastContainer, toast } from "react-toastify";
 
-const AddTableModal = () => {
+type addTableProps = {
+  restaurantId?: string;
+};
+
+const AddTableModal = (props: addTableProps) => {
+  const { restaurantId } = props;
   const [modalVisible, setModalVisible] = useState(false);
+
+  console.log("restaurantId", restaurantId);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const mutateNewTable = useAddNewTableHook();
+
+  const onSubmit = (data: addNewTable) => {
+    data.restaurant = restaurantId;
+
+    mutateNewTable.mutate(data, {
+      onSuccess: () => {
+        reset();
+        toast.success("Table added successfully");
+        setModalVisible(false);
+      },
+      onError: (error) => {
+        toast.error(error.message, {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      },
+    });
+  };
   return (
     <>
+      <ToastContainer />
       <div className="flex  justify-center md:justify-end lg:justify-end">
         <button
           className="rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
@@ -20,7 +58,7 @@ const AddTableModal = () => {
           <div className="relative p-4 w-full max-w-2xl bg-white rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
               <h3 className="text-xl font-semibold text-gray-900 text-center ">
-                Add New Category
+                Add New Table
               </h3>
               <button
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -56,7 +94,13 @@ const AddTableModal = () => {
                     id="username"
                     type="number"
                     placeholder="Enter table number"
+                    {...register("number", { required: true })}
                   />
+                  {errors.number && (
+                    <p className="text-red-500 text-xs mt-1">
+                      Table number is required
+                    </p>
+                  )}
                 </div>
 
                 <div className="mb-4">
@@ -68,11 +112,20 @@ const AddTableModal = () => {
                     id="username"
                     type="number"
                     placeholder="Enter table capacity"
+                    {...register("capacity", { required: true })}
                   />
+                  {errors.capacity && (
+                    <p className="text-red-500 text-xs mt-1">
+                      Table Capacity is required
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex justify-center">
-                  <button className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800">
+                  <button
+                    className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
+                    onClick={handleSubmit(onSubmit)}
+                  >
                     Submit
                   </button>
                 </div>
