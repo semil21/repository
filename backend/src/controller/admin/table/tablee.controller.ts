@@ -1,6 +1,6 @@
 import Table from "../../../schema/admin/table/table.schema";
 import expressAsyncHandler from "express-async-handler";
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import Restaurant from "../../../schema/admin/restaurant/restaurant.schema";
 import mongoose from "mongoose";
 
@@ -64,10 +64,10 @@ export const getAllTablesOfUser = expressAsyncHandler(
 export const updatetableData = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { tablleId } = req.params;
+      const { tableId } = req.params;
 
       const updateTableRecord = await Table.findByIdAndUpdate(
-        { _id: tablleId },
+        { _id: tableId },
         req.body,
         { new: true },
       );
@@ -81,6 +81,34 @@ export const updatetableData = expressAsyncHandler(
       res
         .status(500)
         .send({ response: "Server error, failed to update  table" });
+    }
+  },
+);
+
+export const updateTableStatus = expressAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { tableId } = req.params;
+      const { status } = req.body;
+
+      const updatedStatus = status === true ? false : true;
+
+      const updateTableStatusRecord = await Table.findByIdAndUpdate(
+        { _id: tableId },
+        { status: updatedStatus },
+        { new: true },
+      );
+
+      if (updateTableStatusRecord) {
+        res.status(200).send({ response: updateTableStatusRecord?.status });
+      } else {
+        res.status(400).send({ response: "Failed to update table status" });
+      }
+    } catch (error) {
+      res.status(500).send({
+        response: "Server error, failed to update table status",
+        error: error,
+      });
     }
   },
 );
