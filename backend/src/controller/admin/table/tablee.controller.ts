@@ -40,6 +40,16 @@ export const getAllTablesOfUser = expressAsyncHandler(
             as: "tables",
           },
         },
+        {
+          $project: {
+            user: 1,
+            name: 1,
+            address: 1,
+            city: 1,
+            "tables.number": 1,
+            "tables.capacity": 1,
+          },
+        },
       ];
 
       const fetchAllTablesData = await Restaurant.aggregate(
