@@ -57,6 +57,7 @@ export const getAllTablesOfUser = expressAsyncHandler(
             city: 1,
             "tables.number": 1,
             "tables.capacity": 1,
+            "tables._id": 1,
           },
         },
       ];
@@ -84,8 +85,7 @@ export const updatetableData = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
       const { tableId } = req.params;
-
-      const updateTableRecord = await Table.findByIdAndUpdate(
+      const updateTableRecord = await Table.findOneAndUpdate(
         { _id: tableId },
         req.body,
         { new: true },

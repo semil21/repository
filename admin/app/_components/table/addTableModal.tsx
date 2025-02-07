@@ -1,5 +1,8 @@
 "use client";
-import { useAddNewTableHook } from "@/app/_hooks/table/table.hook";
+import {
+  useAddNewTableHook,
+  useUpdateTableHook,
+} from "@/app/_hooks/table/table.hook";
 import { addNewTable } from "@/app/_types/table.type";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -7,13 +10,15 @@ import { ToastContainer, toast } from "react-toastify";
 
 type addTableProps = {
   restaurantId?: string;
+  openModal?: boolean;
+  closeModal?: (value: boolean) => void;
+  editData?: addNewTable;
 };
 
 const AddTableModal = (props: addTableProps) => {
-  const { restaurantId } = props;
+  const { restaurantId, openModal, closeModal, editData } = props;
   const [modalVisible, setModalVisible] = useState(false);
 
-  console.log("restaurantId", restaurantId);
   const {
     register,
     handleSubmit,
@@ -22,6 +27,7 @@ const AddTableModal = (props: addTableProps) => {
   } = useForm();
 
   const mutateNewTable = useAddNewTableHook();
+  const updateMutatedData = useUpdateTableHook();
 
   const onSubmit = (data: addNewTable) => {
     data.restaurant = restaurantId;
@@ -29,7 +35,9 @@ const AddTableModal = (props: addTableProps) => {
     mutateNewTable.mutate(data, {
       onSuccess: () => {
         reset();
-        toast.success("Table added successfully");
+        toast.success("Table added successfully", {
+          position: "top-center",
+        });
         setModalVisible(false);
       },
       onError: (error) => {
@@ -37,6 +45,22 @@ const AddTableModal = (props: addTableProps) => {
           position: "top-center",
           autoClose: 3000,
         });
+      },
+    });
+  };
+
+  const onUpdate = (data: addNewTable) => {
+    data._id = editData?._id;
+    updateMutatedData.mutate(data, {
+      onSuccess: () => {
+        toast.success("Table updated successfully", {
+          position: "top-center",
+        });
+        closeModal?.(false);
+        reset();
+      },
+      onError: () => {
+        toast.error("Failed to update table data.");
       },
     });
   };
@@ -53,7 +77,7 @@ const AddTableModal = (props: addTableProps) => {
         </button>
       </div>
 
-      {modalVisible && (
+      {(modalVisible || openModal) && (
         <div className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
           <div className="relative p-4 w-full max-w-2xl bg-white rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
@@ -62,7 +86,11 @@ const AddTableModal = (props: addTableProps) => {
               </h3>
               <button
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                onClick={() => setModalVisible(false)}
+                onClick={() => {
+                  setModalVisible(false);
+                  closeModal?.(false);
+                  reset();
+                }}
               >
                 <svg
                   className="w-3 h-3"
@@ -95,6 +123,7 @@ const AddTableModal = (props: addTableProps) => {
                     type="number"
                     placeholder="Enter table number"
                     {...register("number", { required: true })}
+                    defaultValue={openModal ? editData?.number : ""}
                   />
                   {errors.number && (
                     <p className="text-red-500 text-xs mt-1">
@@ -113,6 +142,7 @@ const AddTableModal = (props: addTableProps) => {
                     type="number"
                     placeholder="Enter table capacity"
                     {...register("capacity", { required: true })}
+                    defaultValue={openModal ? editData?.capacity : ""}
                   />
                   {errors.capacity && (
                     <p className="text-red-500 text-xs mt-1">
@@ -122,12 +152,21 @@ const AddTableModal = (props: addTableProps) => {
                 </div>
 
                 <div className="flex justify-center">
-                  <button
-                    className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
-                    onClick={handleSubmit(onSubmit)}
-                  >
-                    Submit
-                  </button>
+                  {!openModal ? (
+                    <button
+                      className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
+                      onClick={handleSubmit(onSubmit)}
+                    >
+                      Submit
+                    </button>
+                  ) : (
+                    <button
+                      className="text-white bg-blue-700 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:focus:ring-blue-800"
+                      onClick={handleSubmit(onUpdate)}
+                    >
+                      Update
+                    </button>
+                  )}
                 </div>
               </form>
             </div>
@@ -135,7 +174,11 @@ const AddTableModal = (props: addTableProps) => {
             <div className="flex justify-end items-center p-4 border-t border-gray-200 rounded-b dark:border-gray-600">
               <button
                 className="text-white bg-blue-700 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:focus:ring-blue-800"
-                onClick={() => setModalVisible(false)}
+                onClick={() => {
+                  setModalVisible(false);
+                  closeModal?.(false);
+                  reset();
+                }}
               >
                 Close
               </button>

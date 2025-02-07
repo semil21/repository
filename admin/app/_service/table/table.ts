@@ -42,3 +42,24 @@ export const addNewTableService = async (data: addNewTable) => {
     throw new Error(errorMessage);
   }
 };
+
+export const updateTableRecordService = async (data: addNewTable) => {
+  try {
+    const auth_token = sessionStorage.getItem("session_id");
+    const { _id } = data;
+
+    const updateTableRecord = await axios.put(
+      `${process.env.NEXT_PUBLIC_DB_URL}/table/update/${_id}`,
+      data,
+      {
+        headers: {
+          Authorization: auth_token,
+        },
+      },
+    );
+
+    return updateTableRecord?.data?.response;
+  } catch (error) {
+    throw error;
+  }
+};
