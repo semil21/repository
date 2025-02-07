@@ -21,6 +21,10 @@ const tableSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  isOccupied: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Table = mongoose.model("Table", tableSchema);
