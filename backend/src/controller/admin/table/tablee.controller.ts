@@ -9,6 +9,7 @@ export const saveNewTable = expressAsyncHandler(
     try {
       const checkTableExists = await Table.findOne({
         number: req.body.number,
+        restaurant: req.body.restaurant,
       });
 
       if (checkTableExists) {
