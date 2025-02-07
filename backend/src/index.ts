@@ -13,6 +13,7 @@ import superAdminRouter from "./route/super-admin/super-admin/super-admin.route"
 import superAdminRestaurantRouter from "./route/super-admin/restaurant/super-admin-restaurant.router";
 import superAdminCategoryRouter from "./route/super-admin/category/super-admin-category";
 import superAdminITemRouter from "./route/super-admin/item/super-admin-item.route";
+import tableRouter from "./route/admin/table/table.route";
 
 connectDatabase();
 
@@ -34,5 +35,6 @@ app.use("/admin", adminRouter);
 app.use("/restaurant", restaurantRouter);
 app.use("/category", categoryRouter);
 app.use("/item", itemRouter);
+app.use("/table", tableRouter);
 
 app.listen(process.env.PORT_NUMBER, () => console.log("Server running"));
