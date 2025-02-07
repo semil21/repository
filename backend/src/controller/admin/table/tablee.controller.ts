@@ -7,12 +7,20 @@ import mongoose from "mongoose";
 export const saveNewTable = expressAsyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const saveNewTableRecord = await Table.create(req.body);
+      const checkTableExists = await Table.findOne({
+        number: req.body.number,
+      });
 
-      if (saveNewTableRecord) {
-        res.status(200).send({ response: saveNewTableRecord });
+      if (checkTableExists) {
+        res.status(400).send({ response: "Table already exists" });
       } else {
-        res.status(400).send({ response: "Failed to save new table" });
+        const saveNewTableRecord = await Table.create(req.body);
+
+        if (saveNewTableRecord) {
+          res.status(200).send({ response: saveNewTableRecord });
+        } else {
+          res.status(400).send({ response: "Failed to save new table" });
+        }
       }
     } catch (error) {
       throw error;
