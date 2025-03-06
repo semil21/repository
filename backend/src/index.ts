@@ -14,6 +14,8 @@ import superAdminRestaurantRouter from "./route/super-admin/restaurant/super-adm
 import superAdminCategoryRouter from "./route/super-admin/category/super-admin-category";
 import superAdminITemRouter from "./route/super-admin/item/super-admin-item.route";
 import tableRouter from "./route/admin/table/table.route";
+import tableBookingRouter from "./route/admin/table/table-booking.route";
+import uploadIMageRouter from "./route/admin/image/image.route";
 
 connectDatabase();
 
@@ -36,5 +38,7 @@ app.use("/restaurant", restaurantRouter);
 app.use("/category", categoryRouter);
 app.use("/item", itemRouter);
 app.use("/table", tableRouter);
+app.use("/booking", tableBookingRouter);
+app.use("/image", uploadIMageRouter);
 
 app.listen(process.env.PORT_NUMBER, () => console.log("Server running"));
